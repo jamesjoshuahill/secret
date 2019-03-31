@@ -1,8 +1,12 @@
 package acceptance_test
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
+	"io/ioutil"
 	"net"
+	"net/http"
 	"os/exec"
 	"testing"
 
@@ -13,6 +17,8 @@ import (
 )
 
 const serverPort = 8080
+
+var client *http.Client
 
 func TestAcceptance(t *testing.T) {
 	var (
@@ -28,6 +34,8 @@ func TestAcceptance(t *testing.T) {
 		serverSession = startServer(pathToServerBinary)
 
 		Eventually(dialServer).Should(Succeed())
+
+		client = newClient()
 	})
 
 	AfterSuite(func() {
@@ -41,7 +49,12 @@ func TestAcceptance(t *testing.T) {
 }
 
 func startServer(pathToServerBinary string) *gexec.Session {
-	cmd := exec.Command(pathToServerBinary, fmt.Sprintf("--port=%d", serverPort))
+	cmd := exec.Command(
+		pathToServerBinary,
+		fmt.Sprintf("--port=%d", serverPort),
+		fmt.Sprintf("--cert=fixtures/cert.pem"),
+		fmt.Sprintf("--key=fixtures/key.pem"),
+	)
 
 	session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
 	Expect(err).NotTo(HaveOccurred())
@@ -55,5 +68,23 @@ func dialServer() error {
 }
 
 func serverUrl(path string) string {
-	return fmt.Sprintf("http://127.0.0.1:%d/%s", serverPort, path)
+	return fmt.Sprintf("https://127.0.0.1:%d/%s", serverPort, path)
+}
+
+func newClient() *http.Client {
+	certPool := x509.NewCertPool()
+
+	rootCA, err := ioutil.ReadFile("fixtures/cert.pem")
+	Expect(err).NotTo(HaveOccurred())
+
+	ok := certPool.AppendCertsFromPEM(rootCA)
+	Expect(ok).To(BeTrue(), "failed to append root CA cert")
+
+	return &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				RootCAs: certPool,
+			},
+		},
+	}
 }

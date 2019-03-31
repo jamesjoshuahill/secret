@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -14,10 +15,22 @@ import (
 
 func main() {
 	port := flag.Int("port", 0, "Port to serve HTTP")
+	cert := flag.String("cert", "", "Path to TLS certificate file")
+	key := flag.String("key", "", "Path to TLS private key file")
 	flag.Parse()
 
+	var missingFlags []string
 	if *port == 0 {
-		fmt.Println("--port flag required")
+		missingFlags = append(missingFlags, "--port")
+	}
+	if *cert == "" {
+		missingFlags = append(missingFlags, "--cert")
+	}
+	if *key == "" {
+		missingFlags = append(missingFlags, "--key")
+	}
+	if len(missingFlags) > 0 {
+		fmt.Println("missing required flags:", strings.Join(missingFlags, ", "))
 		os.Exit(1)
 	}
 
@@ -34,7 +47,7 @@ func main() {
 	}
 
 	log.Printf("Starting server on port %d\n", *port)
-	err := srv.ListenAndServe()
+	err := srv.ListenAndServeTLS(*cert, *key)
 	if err != nil {
 		log.Fatalln(err)
 	}
