@@ -1,4 +1,4 @@
-package api
+package handlers
 
 import (
 	"encoding/json"
@@ -17,7 +17,11 @@ type getCipherRequest struct {
 	Key string `json:"key"`
 }
 
-func (*api) GetCipherHandleFunc(w http.ResponseWriter, r *http.Request) {
+type GetCipher struct {
+	Repository Repository
+}
+
+func (*GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	vars := mux.Vars(r)

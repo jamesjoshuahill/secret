@@ -9,7 +9,7 @@ import (
 
 	"github.com/jamesjoshuahill/ciphers/repository"
 
-	"github.com/jamesjoshuahill/ciphers/api"
+	"github.com/jamesjoshuahill/ciphers/handlers"
 
 	"github.com/jessevdk/go-flags"
 
@@ -33,11 +33,10 @@ func main() {
 	}
 
 	repo := repository.New()
-	a := api.New(repo)
 
 	r := mux.NewRouter()
-	r.HandleFunc("/v1/ciphers", a.CreateCipherHandleFunc).Methods("POST")
-	r.HandleFunc("/v1/ciphers/{resource_id}", a.GetCipherHandleFunc).Methods("GET")
+	r.Handle("/v1/ciphers", &handlers.CreateCipher{Repository: repo}).Methods("POST")
+	r.Handle("/v1/ciphers/{resource_id}", &handlers.GetCipher{Repository: repo}).Methods("GET")
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", opts.Port),
