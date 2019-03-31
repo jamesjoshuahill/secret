@@ -8,8 +8,7 @@ import (
 )
 
 type getCipherResponse struct {
-	ResourceID string `json:"resource_id"`
-	Data       string `json:"data"`
+	Data string `json:"data"`
 }
 
 type getCipherRequest struct {
@@ -25,7 +24,7 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
-	resourceID := vars["resource_id"]
+	id := vars["id"]
 
 	body := &getCipherRequest{}
 	err := json.NewDecoder(r.Body).Decode(body)
@@ -34,7 +33,7 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cipher, err := g.Repository.FindByResourceID(resourceID)
+	cipher, err := g.Repository.FindByID(id)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "finding cipher")
 		return
@@ -47,8 +46,7 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cipherRes := &getCipherResponse{
-		ResourceID: cipher.ResourceID,
-		Data:       plainText,
+		Data: plainText,
 	}
 
 	resBody, err := json.Marshal(cipherRes)

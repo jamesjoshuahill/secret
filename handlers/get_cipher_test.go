@@ -41,23 +41,23 @@ var _ = Describe("GetCipher", func() {
 
 	It("retrieves the cipher", func() {
 		repo.FindByResourceIDCall.Returns.Cipher = repository.Cipher{
-			ResourceID: "client-cipher-id",
+			ID:         "client-cipher-id",
 			CipherText: "some cipher text",
 		}
-		router.Handle("/v1/ciphers/{resource_id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/ciphers/{id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
-		Expect(repo.FindByResourceIDCall.Received.ResourceID).To(Equal("client-cipher-id"))
+		Expect(repo.FindByResourceIDCall.Received.ID).To(Equal("client-cipher-id"))
 	})
 
 	It("decrypts the ciphertext", func() {
 		repo.FindByResourceIDCall.Returns.Cipher = repository.Cipher{
-			ResourceID: "client-cipher-id",
+			ID:         "client-cipher-id",
 			CipherText: "some cipher text",
 		}
-		router.Handle("/v1/ciphers/{resource_id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/ciphers/{id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
@@ -68,7 +68,7 @@ var _ = Describe("GetCipher", func() {
 
 	It("fails when the cipher cannot be retrieved", func() {
 		repo.FindByResourceIDCall.Returns.Error = errors.New("fake error")
-		router.Handle("/v1/ciphers/{resource_id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/ciphers/{id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 

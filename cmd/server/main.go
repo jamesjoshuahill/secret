@@ -42,7 +42,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.Handle("/v1/ciphers", createCipherHandler).Methods("POST")
-	r.Handle("/v1/ciphers/{resource_id}", getCipherHandler).Methods("GET")
+	r.Handle("/v1/ciphers/{id}", getCipherHandler).Methods("GET")
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", opts.Port),

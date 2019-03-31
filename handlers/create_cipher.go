@@ -8,13 +8,12 @@ import (
 )
 
 type createCipherRequest struct {
-	Data       string `json:"data"`
-	ResourceID string `json:"resource_id"`
+	Data string `json:"data"`
+	ID   string `json:"id"`
 }
 
 type createCipherResponse struct {
-	ResourceID string `json:"resource_id"`
-	Key        string `json:"key"`
+	Key string `json:"key"`
 }
 
 type CreateCipher struct {
@@ -39,7 +38,7 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = c.Repository.Store(repository.Cipher{
-		ResourceID: reqBody.ResourceID,
+		ID:         reqBody.ID,
 		CipherText: cipherText,
 	})
 	if err != nil {
@@ -48,8 +47,7 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cipherRes := createCipherResponse{
-		ResourceID: reqBody.ResourceID,
-		Key:        key,
+		Key: key,
 	}
 
 	resBody, err := json.Marshal(cipherRes)

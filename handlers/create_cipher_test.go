@@ -30,7 +30,7 @@ var _ = Describe("CreateCipher", func() {
 
 		var err error
 		req, err = http.NewRequest("POST", "/v1/ciphers", strings.NewReader(`{
-			"resource_id": "client-cipher-id",
+			"id": "client-cipher-id",
 			"data": "some plain text"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
@@ -65,7 +65,7 @@ var _ = Describe("CreateCipher", func() {
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
 		Expect(repo.StoreCall.Received.Cipher).To(Equal(repository.Cipher{
-			ResourceID: "client-cipher-id",
+			ID:         "client-cipher-id",
 			CipherText: "some cipher text",
 		}))
 	})

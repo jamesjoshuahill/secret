@@ -10,9 +10,9 @@ func (r *repo) Store(cipher Cipher) error {
 	return nil
 }
 
-func (r *repo) FindByResourceID(resourceID string) (Cipher, error) {
+func (r *repo) FindByID(id string) (Cipher, error) {
 	return Cipher{
-		ResourceID: resourceID,
+		ID:         id,
 		CipherText: "some cipher text",
 	}, nil
 }

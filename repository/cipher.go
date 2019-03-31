@@ -1,6 +1,6 @@
 package repository
 
 type Cipher struct {
-	ResourceID string
+	ID         string
 	CipherText string
 }

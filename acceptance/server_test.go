@@ -38,7 +38,7 @@ var _ = Describe("Server", func() {
 
 	It("accepts a valid create cipher request", func() {
 		res, err := client.Post(serverUrl("v1/ciphers"), "application/json", strings.NewReader(`{
-			"resource_id": "client-cipher-id",
+			"id": "client-cipher-id",
 			"data": "some plain text"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
@@ -48,7 +48,6 @@ var _ = Describe("Server", func() {
 		body, err := ioutil.ReadAll(res.Body)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(body).To(MatchJSON(`{
-			"resource_id": "client-cipher-id",
 			"key": "key for client-cipher-id"
 		}`))
 	})
@@ -81,7 +80,6 @@ var _ = Describe("Server", func() {
 		body, err := ioutil.ReadAll(res.Body)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(body).To(MatchJSON(`{
-			"resource_id": "client-cipher-id",
 			"data": "some plain text"
 		}`))
 	})

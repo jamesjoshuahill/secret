@@ -13,7 +13,7 @@ type FakeRepo struct {
 	}
 	FindByResourceIDCall struct {
 		Received struct {
-			ResourceID string
+			ID string
 		}
 		Returns struct {
 			Cipher repository.Cipher
@@ -27,7 +27,7 @@ func (r *FakeRepo) Store(cipher repository.Cipher) error {
 	return r.StoreCall.Returns.Error
 }
 
-func (r *FakeRepo) FindByResourceID(resourceID string) (repository.Cipher, error) {
-	r.FindByResourceIDCall.Received.ResourceID = resourceID
+func (r *FakeRepo) FindByID(id string) (repository.Cipher, error) {
+	r.FindByResourceIDCall.Received.ID = id
 	return r.FindByResourceIDCall.Returns.Cipher, r.FindByResourceIDCall.Returns.Error
 }
