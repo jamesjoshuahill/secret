@@ -46,7 +46,6 @@ type createCipherRequest struct {
 }
 
 type createCipherResponse struct {
-	ID         string `json:"id"`
 	ResourceID string `json:"resource_id"`
 	Key        string `json:"key"`
 }
@@ -67,9 +66,8 @@ func createCipherHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cipher := createCipherResponse{
-		ID:         "server cipher id",
 		ResourceID: body.ResourceID,
-		Key:        "key for server cipher id",
+		Key:        "key for server-cipher-id",
 	}
 
 	resBody, err := json.Marshal(cipher)
