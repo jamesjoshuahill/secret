@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -30,21 +29,18 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	body := &getCipherRequest{}
 	err := json.NewDecoder(r.Body).Decode(body)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, errorResponseBody("decoding request body"))
+		writeError(w, http.StatusBadRequest, "decoding request body")
 		return
 	}
 
 	cipher, err := g.Repository.FindByResourceID(resourceID)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, errorResponseBody("finding cipher"))
+		writeError(w, http.StatusInternalServerError, "finding cipher")
 		return
 	}
 
 	if body.Key != cipher.Key {
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintln(w, errorResponseBody("wrong key"))
+		writeError(w, http.StatusUnauthorized, "wrong key")
 		return
 	}
 
@@ -55,8 +51,7 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	resBody, err := json.Marshal(cipherRes)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, errorResponseBody("encoding response body"))
+		writeError(w, http.StatusInternalServerError, "encoding response body")
 		return
 	}
 

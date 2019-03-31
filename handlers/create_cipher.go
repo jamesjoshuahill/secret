@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/jamesjoshuahill/ciphers/repository"
@@ -29,12 +28,15 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	reqBody := &createCipherRequest{}
 	err := json.NewDecoder(r.Body).Decode(reqBody)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, errorResponseBody("decoding request body"))
+		writeError(w, http.StatusBadRequest, "decoding request body")
 		return
 	}
 
-	key, cipherText, _ := c.Encrypter.Encrypt(reqBody.Data)
+	key, cipherText, err := c.Encrypter.Encrypt(reqBody.Data)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "encrypting data")
+		return
+	}
 
 	err = c.Repository.Store(repository.Cipher{
 		ResourceID: reqBody.ResourceID,
@@ -42,8 +44,7 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Key:        key,
 	})
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, errorResponseBody("storing cipher"))
+		writeError(w, http.StatusInternalServerError, "storing cipher")
 		return
 	}
 
@@ -54,8 +55,7 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	resBody, err := json.Marshal(cipherRes)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, errorResponseBody("encoding response body"))
+		writeError(w, http.StatusInternalServerError, "encoding response body")
 		return
 	}
 
