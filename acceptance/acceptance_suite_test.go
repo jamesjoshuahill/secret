@@ -26,6 +26,8 @@ func TestAcceptance(t *testing.T) {
 		Expect(err).NotTo(HaveOccurred())
 
 		serverSession = startServer(pathToServerBinary)
+
+		Eventually(dialServer).Should(Succeed())
 	})
 
 	AfterSuite(func() {
@@ -51,4 +53,8 @@ func startServer(pathToServerBinary string) *gexec.Session {
 func dialServer() error {
 	_, err := net.Dial("tcp", fmt.Sprintf(":%d", serverPort))
 	return err
+}
+
+func serverUrl(path string) string {
+	return fmt.Sprintf("http://127.0.0.1:%d/%s", serverPort, path)
 }
