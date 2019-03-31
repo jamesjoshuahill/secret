@@ -11,12 +11,13 @@ var _ = Describe("Encrypter", func() {
 	It("encrypts plain text", func() {
 		encrypter := encryption.Encrypter{}
 
-		_, cipherText1, err := encrypter.Encrypt("some plain text")
+		key1, cipherText1, err := encrypter.Encrypt("some plain text")
 		Expect(err).NotTo(HaveOccurred())
 
-		_, cipherText2, err := encrypter.Encrypt("some plain text")
+		key2, cipherText2, err := encrypter.Encrypt("some plain text")
 		Expect(err).NotTo(HaveOccurred())
 
+		Expect(key1).NotTo(Equal(key2))
 		Expect(cipherText2).NotTo(Equal(cipherText1))
 	})
 })

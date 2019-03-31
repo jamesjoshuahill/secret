@@ -31,5 +31,5 @@ func (Encrypter) Encrypt(plaintext string) (string, string, error) {
 	}
 
 	cipherText := aesgcm.Seal(nil, nonce, []byte(plaintext), nil)
-	return hexKey, string(cipherText), nil
+	return hex.EncodeToString(nonce), hex.EncodeToString(cipherText), nil
 }

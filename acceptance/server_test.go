@@ -1,6 +1,8 @@
 package acceptance_test
 
 import (
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os/exec"
@@ -36,20 +38,42 @@ var _ = Describe("Server", func() {
 		))
 	})
 
-	It("accepts a valid create cipher request", func() {
-		res, err := client.Post(serverUrl("v1/ciphers"), "application/json", strings.NewReader(`{
-			"id": "client-cipher-id",
-			"data": "some plain text"
-		}`))
-		Expect(err).NotTo(HaveOccurred())
-		Expect(res.StatusCode).To(Equal(http.StatusOK))
-		Expect(res.Header.Get("Content-Type")).To(Equal("application/json"))
+	It("creates and stores ciphers", func() {
+		var key string
+		By("accepting a valid create cipher request", func() {
+			res, err := client.Post(serverUrl("v1/ciphers"), "application/json", strings.NewReader(`{
+				"id": "client-cipher-id",
+				"data": "some plain text"
+			}`))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(res.StatusCode).To(Equal(http.StatusOK))
+			Expect(res.Header.Get("Content-Type")).To(Equal("application/json"))
 
-		body, err := ioutil.ReadAll(res.Body)
-		Expect(err).NotTo(HaveOccurred())
-		Expect(body).To(MatchJSON(`{
-			"key": "6368616e676520746869732070617373776f726420746f206120736563726574"
-		}`))
+			var body createCipherResponseBody
+			err = json.NewDecoder(res.Body).Decode(&body)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(body.Key).NotTo(BeEmpty())
+			key = body.Key
+		})
+
+		By("accepting a valid get cipher request", func() {
+			reqBody := fmt.Sprintf(`{
+				"key": "%s"
+			}`, key)
+			req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader(reqBody))
+			Expect(err).NotTo(HaveOccurred())
+
+			res, err := client.Do(req)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(res.StatusCode).To(Equal(http.StatusOK))
+			Expect(res.Header.Get("Content-Type")).To(Equal("application/json"))
+
+			body, err := ioutil.ReadAll(res.Body)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(body).To(MatchJSON(`{
+				"data": "some plain text"
+			}`))
+		})
 	})
 
 	It("rejects a malformed create cipher request", func() {
@@ -64,24 +88,6 @@ var _ = Describe("Server", func() {
 			ContainSubstring("error"),
 			ContainSubstring("decoding request body"),
 		))
-	})
-
-	It("accepts a valid get cipher request", func() {
-		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader(`{
-			"key": "6368616e676520746869732070617373776f726420746f206120736563726574"
-		}`))
-		Expect(err).NotTo(HaveOccurred())
-
-		res, err := client.Do(req)
-		Expect(err).NotTo(HaveOccurred())
-		Expect(res.StatusCode).To(Equal(http.StatusOK))
-		Expect(res.Header.Get("Content-Type")).To(Equal("application/json"))
-
-		body, err := ioutil.ReadAll(res.Body)
-		Expect(err).NotTo(HaveOccurred())
-		Expect(body).To(MatchJSON(`{
-			"data": "some plain text"
-		}`))
 	})
 
 	It("rejects a malformed get cipher request", func() {
@@ -103,7 +109,7 @@ var _ = Describe("Server", func() {
 
 	It("rejects a get cipher request with the wrong key", func() {
 		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader(`{
-			"key": "wrong key"
+			"key": "aaaaaaaaaaaaaaaaaaaaaaaa"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
 
@@ -120,3 +126,7 @@ var _ = Describe("Server", func() {
 		))
 	})
 })
+
+type createCipherResponseBody struct {
+	Key string `json:"key"`
+}
