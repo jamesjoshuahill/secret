@@ -2,35 +2,30 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"strings"
 	"time"
+
+	"github.com/jessevdk/go-flags"
 
 	"github.com/gorilla/mux"
 )
 
-func main() {
-	port := flag.Int("port", 0, "Port to serve HTTP")
-	cert := flag.String("cert", "", "Path to TLS certificate file")
-	key := flag.String("key", "", "Path to TLS private key file")
-	flag.Parse()
+type options struct {
+	Port int    `long:"port" description:"Port to serve HTTPS" required:"true"`
+	Cert string `long:"cert" description:"Path to TLS certificate file" required:"true"`
+	Key  string `long:"key" description:"Path to TLS private key file" required:"true"`
+}
 
-	var missingFlags []string
-	if *port == 0 {
-		missingFlags = append(missingFlags, "--port")
-	}
-	if *cert == "" {
-		missingFlags = append(missingFlags, "--cert")
-	}
-	if *key == "" {
-		missingFlags = append(missingFlags, "--key")
-	}
-	if len(missingFlags) > 0 {
-		fmt.Println("missing required flags:", strings.Join(missingFlags, ", "))
+func main() {
+	opts := &options{}
+	_, err := flags.Parse(opts)
+	if err != nil {
+		if outErr, ok := err.(*flags.Error); ok && outErr.Type == flags.ErrHelp {
+			os.Exit(0)
+		}
 		os.Exit(1)
 	}
 
@@ -39,15 +34,15 @@ func main() {
 	r.HandleFunc("/v1/ciphers/{resource_id}", getCipherHandler).Methods("GET")
 
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%d", *port),
+		Addr:         fmt.Sprintf(":%d", opts.Port),
 		Handler:      r,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
 	}
 
-	log.Printf("Starting server on port %d\n", *port)
-	err := srv.ListenAndServeTLS(*cert, *key)
+	log.Printf("Starting server on port %d\n", opts.Port)
+	err = srv.ListenAndServeTLS(opts.Cert, opts.Key)
 	if err != nil {
 		log.Fatalln(err)
 	}

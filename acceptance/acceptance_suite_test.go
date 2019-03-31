@@ -18,13 +18,13 @@ import (
 
 const serverPort = 8080
 
-var client *http.Client
+var (
+	pathToServerBinary string
+	client             *http.Client
+)
 
 func TestAcceptance(t *testing.T) {
-	var (
-		pathToServerBinary string
-		serverSession      *gexec.Session
-	)
+	var serverSession *gexec.Session
 
 	BeforeSuite(func() {
 		var err error

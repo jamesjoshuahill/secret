@@ -3,13 +3,39 @@ package acceptance_test
 import (
 	"io/ioutil"
 	"net/http"
+	"os/exec"
 	"strings"
+
+	. "github.com/onsi/gomega/gbytes"
+	. "github.com/onsi/gomega/gexec"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Server", func() {
+	It("can print usage", func() {
+		cmd := exec.Command(pathToServerBinary, "--help")
+		session, err := Start(cmd, GinkgoWriter, GinkgoWriter)
+		Expect(err).NotTo(HaveOccurred())
+		Eventually(session).Should(Exit(0))
+		Expect(session.Out).To(SatisfyAll(
+			Say("--port= Port to serve HTTPS"),
+			Say("--cert= Path to TLS certificate file"),
+			Say("--key=  Path to TLS private key file"),
+		))
+	})
+
+	It("fails when flags cannot be parsed", func() {
+		cmd := exec.Command(pathToServerBinary, "--port=not-an-int")
+		session, err := Start(cmd, GinkgoWriter, GinkgoWriter)
+		Expect(err).NotTo(HaveOccurred())
+		Eventually(session).Should(Exit(1))
+		Expect(session.Err).To(SatisfyAll(
+			Say("invalid argument for flag `--port'"),
+		))
+	})
+
 	It("accepts a valid create cipher request", func() {
 		res, err := client.Post(serverUrl("v1/ciphers"), "application/json", strings.NewReader(`{
 			"resource_id": "newClient-cipher-id",
