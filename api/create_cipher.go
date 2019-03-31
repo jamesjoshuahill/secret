@@ -16,7 +16,7 @@ type createCipherResponse struct {
 	Key        string `json:"key"`
 }
 
-func CreateCipherHandler(w http.ResponseWriter, r *http.Request) {
+func (*api) CreateCipherHandleFunc(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	body := &createCipherRequest{}

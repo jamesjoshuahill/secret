@@ -17,7 +17,7 @@ type getCipherRequest struct {
 	Key string `json:"key"`
 }
 
-func GetCipherHandler(w http.ResponseWriter, r *http.Request) {
+func (*api) GetCipherHandleFunc(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
