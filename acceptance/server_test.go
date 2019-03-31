@@ -48,7 +48,7 @@ var _ = Describe("Server", func() {
 		body, err := ioutil.ReadAll(res.Body)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(body).To(MatchJSON(`{
-			"key": "key for client-cipher-id"
+			"key": "6368616e676520746869732070617373776f726420746f206120736563726574"
 		}`))
 	})
 
@@ -68,7 +68,7 @@ var _ = Describe("Server", func() {
 
 	It("accepts a valid get cipher request", func() {
 		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader(`{
-			"key": "key for client-cipher-id"
+			"key": "6368616e676520746869732070617373776f726420746f206120736563726574"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
 

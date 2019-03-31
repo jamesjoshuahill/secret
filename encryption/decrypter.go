@@ -5,7 +5,7 @@ import "errors"
 type Decrypter struct{}
 
 func (Decrypter) Decrypt(key, cipherText string) (string, error) {
-	if key != "key for client-cipher-id" {
+	if key != hexKey {
 		return "", errors.New("wrong key")
 	}
 
