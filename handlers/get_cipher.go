@@ -35,7 +35,7 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	cipher, err := g.Repository.FindByID(id)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "finding cipher")
+		writeError(w, http.StatusNotFound, "not found")
 		return
 	}
 

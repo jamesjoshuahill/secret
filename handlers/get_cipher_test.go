@@ -66,13 +66,13 @@ var _ = Describe("GetCipher", func() {
 		Expect(decrypter.DecryptCall.Received.CipherText).To(Equal("some cipher text"))
 	})
 
-	It("fails when the cipher cannot be retrieved", func() {
+	It("fails when the cipher is not found", func() {
 		repo.FindByResourceIDCall.Returns.Error = errors.New("fake error")
 		router.Handle("/v1/ciphers/{id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
-		Expect(res.Code).To(Equal(http.StatusInternalServerError), res.Body.String())
-		Expect(res.Body.String()).To(ContainSubstring("finding cipher"))
+		Expect(res.Code).To(Equal(http.StatusNotFound), res.Body.String())
+		Expect(res.Body.String()).To(ContainSubstring("not found"))
 	})
 })
