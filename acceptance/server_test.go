@@ -36,6 +36,9 @@ var _ = Describe("Server", func() {
 
 		body, err := ioutil.ReadAll(res.Body)
 		Expect(err).NotTo(HaveOccurred())
-		Expect(string(body)).To(ContainSubstring("error decoding request body"))
+		Expect(string(body)).To(SatisfyAll(
+			ContainSubstring("error"),
+			ContainSubstring("decoding request body"),
+		))
 	})
 })

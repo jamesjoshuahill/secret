@@ -42,7 +42,7 @@ func createCipherHandler(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, errorResponseBody("error decoding request body", err))
+		fmt.Fprintln(w, errorResponseBody("decoding request body", err))
 		return
 	}
 
@@ -54,7 +54,7 @@ func createCipherHandler(w http.ResponseWriter, r *http.Request) {
 	resBody, err := json.Marshal(cipher)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, errorResponseBody("error encoding response body", err))
+		fmt.Fprintln(w, errorResponseBody("encoding response body", err))
 		return
 	}
 
@@ -68,7 +68,7 @@ func errorResponseBody(context string, err error) string {
 
 	resBody, err := json.Marshal(errRes)
 	if err != nil {
-		return fmt.Sprintf(`{"error":"error encoding error response body: %s"}`, err)
+		return fmt.Sprintf(`{"error":"encoding error response body: %s"}`, err)
 	}
 
 	return string(resBody)
