@@ -1,3 +1,3 @@
-# encryption
+# ciphers
 
-A microservice written in Go that provides AES encryption.
+A microservice written in Go that creates ciphers using AES encryption.

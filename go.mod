@@ -1,4 +1,4 @@
-module github.com/jamesjoshuahill/encryption
+module github.com/jamesjoshuahill/ciphers
 
 go 1.12
 
