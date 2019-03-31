@@ -23,8 +23,8 @@ var _ = Describe("Server", func() {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(body).To(MatchJSON(`{
 			"id": "server cipher id",
-			"data": "some plain text",
-			"resource_id": "client cipher id"
+			"resource_id": "client cipher id",
+			"key": "key for server cipher id"
 		}`))
 	})
 
