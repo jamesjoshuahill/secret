@@ -29,17 +29,22 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(reqBody)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, errorResponseBody(fmt.Sprintf("decoding request body: %s", err)))
+		fmt.Fprintln(w, errorResponseBody("decoding request body"))
 		return
 	}
 
 	key := "key for client-cipher-id"
 
-	_ = c.Repository.Store(repository.Cipher{
+	err = c.Repository.Store(repository.Cipher{
 		ResourceID: reqBody.ResourceID,
 		Data:       reqBody.Data,
 		Key:        key,
 	})
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, errorResponseBody("storing cipher"))
+		return
+	}
 
 	cipherRes := createCipherResponse{
 		ResourceID: reqBody.ResourceID,
@@ -49,7 +54,7 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	resBody, err := json.Marshal(cipherRes)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, errorResponseBody(fmt.Sprintf("encoding response body: %s", err)))
+		fmt.Fprintln(w, errorResponseBody("encoding response body"))
 		return
 	}
 

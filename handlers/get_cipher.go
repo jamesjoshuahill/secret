@@ -31,11 +31,16 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, errorResponseBody(fmt.Sprintf("decoding request body: %s", err)))
+		fmt.Fprintln(w, errorResponseBody("decoding request body"))
 		return
 	}
 
-	cipher, _ := g.Repository.FindByResourceID(resourceID)
+	cipher, err := g.Repository.FindByResourceID(resourceID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, errorResponseBody("finding cipher"))
+		return
+	}
 
 	if body.Key != cipher.Key {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -51,7 +56,7 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	resBody, err := json.Marshal(cipherRes)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, errorResponseBody(fmt.Sprintf("encoding response body: %s", err)))
+		fmt.Fprintln(w, errorResponseBody("encoding response body"))
 		return
 	}
 

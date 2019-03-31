@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -17,24 +18,46 @@ import (
 )
 
 var _ = Describe("GetCipher", func() {
+	var (
+		repo   *fakes.FakeRepo
+		res    *httptest.ResponseRecorder
+		req    *http.Request
+		router *mux.Router
+	)
+
+	BeforeEach(func() {
+		repo = new(fakes.FakeRepo)
+		res = httptest.NewRecorder()
+		router = mux.NewRouter()
+
+		var err error
+		req, err = http.NewRequest("GET", "/v1/ciphers/client-cipher-id", strings.NewReader(`{
+			"key": "key for client-cipher-id"
+		}`))
+		Expect(err).NotTo(HaveOccurred())
+	})
+
 	It("retrieves the cipher", func() {
-		repo := new(fakes.FakeRepo)
 		repo.FindByResourceIDCall.Returns.Cipher = repository.Cipher{
 			ResourceID: "client-cipher-id",
 			Data:       "some plain text",
 			Key:        "key for client-cipher-id",
 		}
-		req, err := http.NewRequest("GET", "/v1/ciphers/client-cipher-id", strings.NewReader(`{
-			"key": "key for client-cipher-id"
-		}`))
-		Expect(err).NotTo(HaveOccurred())
-		res := httptest.NewRecorder()
-		router := mux.NewRouter()
 		router.Handle("/v1/ciphers/{resource_id}", &handlers.GetCipher{Repository: repo})
 
 		router.ServeHTTP(res, req)
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
 		Expect(repo.FindByResourceIDCall.Received.ResourceID).To(Equal("client-cipher-id"))
+	})
+
+	It("fails when the cipher cannot be retrieved", func() {
+		repo.FindByResourceIDCall.Returns.Error = errors.New("fake error")
+		router.Handle("/v1/ciphers/{resource_id}", &handlers.GetCipher{Repository: repo})
+
+		router.ServeHTTP(res, req)
+
+		Expect(res.Code).To(Equal(http.StatusInternalServerError), res.Body.String())
+		Expect(res.Body.String()).To(ContainSubstring("finding cipher"))
 	})
 })
