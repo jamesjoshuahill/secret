@@ -17,13 +17,15 @@ import (
 
 var _ = Describe("CreateCipher", func() {
 	var (
-		repo *fakes.FakeRepo
-		res  *httptest.ResponseRecorder
-		req  *http.Request
+		repo      *fakes.FakeRepo
+		encrypter *fakes.FakeEncrypter
+		res       *httptest.ResponseRecorder
+		req       *http.Request
 	)
 
 	BeforeEach(func() {
 		repo = new(fakes.FakeRepo)
+		encrypter = new(fakes.FakeEncrypter)
 		res = httptest.NewRecorder()
 
 		var err error
@@ -34,8 +36,19 @@ var _ = Describe("CreateCipher", func() {
 		Expect(err).NotTo(HaveOccurred())
 	})
 
+	It("encrypts the plain text", func() {
+		encrypter.EncryptCall.Returns.Key = "key for client-cipher-id"
+		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
+
+		handler.ServeHTTP(res, req)
+
+		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
+		Expect(encrypter.EncryptCall.Received.Plaintext).To(Equal("some plain text"))
+	})
+
 	It("stores the cipher", func() {
-		handler := handlers.CreateCipher{Repository: repo}
+		encrypter.EncryptCall.Returns.Key = "key for client-cipher-id"
+		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
 
 		handler.ServeHTTP(res, req)
 
@@ -48,8 +61,9 @@ var _ = Describe("CreateCipher", func() {
 	})
 
 	It("fails when the cipher cannot be stored", func() {
+		encrypter.EncryptCall.Returns.Key = "key for client-cipher-id"
 		repo.StoreCall.Returns.Error = errors.New("fake error")
-		handler := handlers.CreateCipher{Repository: repo}
+		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
 
 		handler.ServeHTTP(res, req)
 

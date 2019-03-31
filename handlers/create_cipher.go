@@ -20,6 +20,7 @@ type createCipherResponse struct {
 
 type CreateCipher struct {
 	Repository Repository
+	Encrypter  Encrypter
 }
 
 func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +34,7 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	key := "key for client-cipher-id"
+	key, _, _ := c.Encrypter.Encrypt(reqBody.Data)
 
 	err = c.Repository.Store(repository.Cipher{
 		ResourceID: reqBody.ResourceID,

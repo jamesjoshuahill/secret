@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/jamesjoshuahill/ciphers/encryption"
+
 	"github.com/jamesjoshuahill/ciphers/repository"
 
 	"github.com/jamesjoshuahill/ciphers/handlers"
@@ -33,9 +35,10 @@ func main() {
 	}
 
 	repo := repository.New()
+	encrypter := encryption.Encrypter{}
 
 	r := mux.NewRouter()
-	r.Handle("/v1/ciphers", &handlers.CreateCipher{Repository: repo}).Methods("POST")
+	r.Handle("/v1/ciphers", &handlers.CreateCipher{Repository: repo, Encrypter: encrypter}).Methods("POST")
 	r.Handle("/v1/ciphers/{resource_id}", &handlers.GetCipher{Repository: repo}).Methods("GET")
 
 	srv := &http.Server{
