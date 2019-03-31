@@ -13,6 +13,10 @@ func New() *repo {
 }
 
 func (r *repo) Store(cipher Cipher) error {
+	if _, ok := r.ciphers[cipher.ID]; ok {
+		return errors.New("already exists")
+	}
+
 	r.ciphers[cipher.ID] = cipher.CipherText
 
 	return nil

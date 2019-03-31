@@ -70,14 +70,14 @@ var _ = Describe("CreateCipher", func() {
 		}))
 	})
 
-	It("fails when the cipher cannot be stored", func() {
+	It("fails when the cipher already exists", func() {
 		encrypter.EncryptCall.Returns.Key = "key for client-cipher-id"
 		repo.StoreCall.Returns.Error = errors.New("fake error")
 		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
 
 		handler.ServeHTTP(res, req)
 
-		Expect(res.Code).To(Equal(http.StatusInternalServerError), res.Body.String())
-		Expect(res.Body.String()).To(ContainSubstring("storing cipher"))
+		Expect(res.Code).To(Equal(http.StatusConflict), res.Body.String())
+		Expect(res.Body.String()).To(ContainSubstring("cipher already exists"))
 	})
 })

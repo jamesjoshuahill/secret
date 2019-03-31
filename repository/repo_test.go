@@ -23,6 +23,22 @@ var _ = Describe("Repo", func() {
 		Expect(actualCipher).To(Equal(cipher))
 	})
 
+	It("fails when the cipher already exits", func() {
+		repo := repository.New()
+
+		err := repo.Store(repository.Cipher{
+			ID:         "some-id",
+			CipherText: "some-cipher-text",
+		})
+		Expect(err).NotTo(HaveOccurred())
+
+		err = repo.Store(repository.Cipher{
+			ID:         "some-id",
+			CipherText: "some-cipher-text",
+		})
+		Expect(err).To(MatchError("already exists"))
+	})
+
 	It("fails when it cannot find a cipher", func() {
 		repo := repository.New()
 

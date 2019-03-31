@@ -42,7 +42,7 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		CipherText: cipherText,
 	})
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "storing cipher")
+		writeError(w, http.StatusConflict, "cipher already exists")
 		return
 	}
 
