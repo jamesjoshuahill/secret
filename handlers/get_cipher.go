@@ -40,12 +40,11 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if body.Key != cipher.Key {
+	plainText, err := g.Decrypter.Decrypt(body.Key, cipher.CipherText)
+	if err != nil {
 		writeError(w, http.StatusUnauthorized, "wrong key")
 		return
 	}
-
-	plainText, _ := g.Decrypter.Decrypt(cipher.Key, cipher.CipherText)
 
 	cipherRes := &getCipherResponse{
 		ResourceID: cipher.ResourceID,

@@ -14,6 +14,5 @@ func (r *repo) FindByResourceID(resourceID string) (Cipher, error) {
 	return Cipher{
 		ResourceID: resourceID,
 		CipherText: "some cipher text",
-		Key:        "key for client-cipher-id",
 	}, nil
 }

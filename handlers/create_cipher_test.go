@@ -67,7 +67,6 @@ var _ = Describe("CreateCipher", func() {
 		Expect(repo.StoreCall.Received.Cipher).To(Equal(repository.Cipher{
 			ResourceID: "client-cipher-id",
 			CipherText: "some cipher text",
-			Key:        "key for client-cipher-id",
 		}))
 	})
 

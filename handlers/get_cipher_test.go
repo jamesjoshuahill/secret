@@ -43,7 +43,6 @@ var _ = Describe("GetCipher", func() {
 		repo.FindByResourceIDCall.Returns.Cipher = repository.Cipher{
 			ResourceID: "client-cipher-id",
 			CipherText: "some cipher text",
-			Key:        "key for client-cipher-id",
 		}
 		router.Handle("/v1/ciphers/{resource_id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
 
@@ -57,7 +56,6 @@ var _ = Describe("GetCipher", func() {
 		repo.FindByResourceIDCall.Returns.Cipher = repository.Cipher{
 			ResourceID: "client-cipher-id",
 			CipherText: "some cipher text",
-			Key:        "key for client-cipher-id",
 		}
 		router.Handle("/v1/ciphers/{resource_id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
 

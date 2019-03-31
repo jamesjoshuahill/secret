@@ -41,7 +41,6 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	err = c.Repository.Store(repository.Cipher{
 		ResourceID: reqBody.ResourceID,
 		CipherText: cipherText,
-		Key:        key,
 	})
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "storing cipher")
