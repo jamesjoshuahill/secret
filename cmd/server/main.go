@@ -23,7 +23,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/v1/ciphers", createCipherHandler).Methods("POST")
-	http.Handle("/", r)
+	r.HandleFunc("/v1/ciphers/{resource_id}", getCipherHandler).Methods("GET")
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", *port),
@@ -61,7 +61,7 @@ func createCipherHandler(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, errorResponseBody("decoding request body", err))
+		fmt.Fprintln(w, errorResponseBody(fmt.Sprintf("decoding request body: %s", err)))
 		return
 	}
 
@@ -73,22 +73,66 @@ func createCipherHandler(w http.ResponseWriter, r *http.Request) {
 	resBody, err := json.Marshal(cipher)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, errorResponseBody("encoding response body", err))
+		fmt.Fprintln(w, errorResponseBody(fmt.Sprintf("encoding response body: %s", err)))
 		return
 	}
 
 	w.Write(resBody)
 }
 
-func errorResponseBody(context string, err error) string {
-	errRes := errorResponse{
-		Message: fmt.Sprintf("%s: %s", context, err),
+type getCipherResponse struct {
+	ResourceID string `json:"resource_id"`
+	Data       string `json:"data"`
+}
+
+type getCipherRequest struct {
+	Key string `json:"key"`
+}
+
+func getCipherHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	resourceID := vars["resource_id"]
+
+	body := &getCipherRequest{}
+	err := json.NewDecoder(r.Body).Decode(body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, errorResponseBody(fmt.Sprintf("decoding request body: %s", err)))
+		return
 	}
 
-	resBody, err := json.Marshal(errRes)
+	if body.Key != "key for server-cipher-id" {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintln(w, errorResponseBody("wrong key"))
+		return
+	}
+
+	cipher := &getCipherResponse{
+		ResourceID: resourceID,
+		Data:       "some plain text",
+	}
+
+	resBody, err := json.Marshal(cipher)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, errorResponseBody(fmt.Sprintf("encoding response body: %s", err)))
+		return
+	}
+
+	w.Write(resBody)
+}
+
+func errorResponseBody(msg string) string {
+	errRes := errorResponse{
+		Message: msg,
+	}
+
+	body, err := json.Marshal(errRes)
 	if err != nil {
 		return fmt.Sprintf(`{"error":"encoding error response body: %s"}`, err)
 	}
 
-	return string(resBody)
+	return string(body)
 }
