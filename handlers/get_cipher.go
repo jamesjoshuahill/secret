@@ -21,7 +21,7 @@ type GetCipher struct {
 	Repository Repository
 }
 
-func (*GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -35,18 +35,20 @@ func (*GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if body.Key != "key for server-cipher-id" {
+	cipher, _ := g.Repository.FindByResourceID(resourceID)
+
+	if body.Key != cipher.Key {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, errorResponseBody("wrong key"))
 		return
 	}
 
-	cipher := &getCipherResponse{
-		ResourceID: resourceID,
-		Data:       "some plain text",
+	cipherRes := &getCipherResponse{
+		ResourceID: cipher.ResourceID,
+		Data:       cipher.Data,
 	}
 
-	resBody, err := json.Marshal(cipher)
+	resBody, err := json.Marshal(cipherRes)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, errorResponseBody(fmt.Sprintf("encoding response body: %s", err)))

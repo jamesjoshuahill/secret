@@ -33,7 +33,7 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	key := "key for server-cipher-id"
+	key := "key for client-cipher-id"
 
 	_ = c.Repository.Store(repository.Cipher{
 		ResourceID: reqBody.ResourceID,
@@ -41,12 +41,12 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Key:        key,
 	})
 
-	cipher := createCipherResponse{
+	cipherRes := createCipherResponse{
 		ResourceID: reqBody.ResourceID,
 		Key:        key,
 	}
 
-	resBody, err := json.Marshal(cipher)
+	resBody, err := json.Marshal(cipherRes)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, errorResponseBody(fmt.Sprintf("encoding response body: %s", err)))

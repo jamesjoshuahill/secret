@@ -49,7 +49,7 @@ var _ = Describe("Server", func() {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(body).To(MatchJSON(`{
 			"resource_id": "client-cipher-id",
-			"key": "key for server-cipher-id"
+			"key": "key for client-cipher-id"
 		}`))
 	})
 
@@ -69,7 +69,7 @@ var _ = Describe("Server", func() {
 
 	It("accepts a valid get cipher request", func() {
 		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader(`{
-			"key": "key for server-cipher-id"
+			"key": "key for client-cipher-id"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
 
@@ -87,7 +87,7 @@ var _ = Describe("Server", func() {
 	})
 
 	It("rejects a malformed get cipher request", func() {
-		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/newClient-cipher-id"), strings.NewReader("not json"))
+		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader("not json"))
 		Expect(err).NotTo(HaveOccurred())
 
 		res, err := client.Do(req)

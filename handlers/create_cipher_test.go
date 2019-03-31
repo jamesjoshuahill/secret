@@ -18,21 +18,21 @@ var _ = Describe("CreateCipher", func() {
 	It("stores the cipher", func() {
 		repo := new(fakes.FakeRepo)
 
-		req, err := http.NewRequest("POST", "v1/ciphers", strings.NewReader(`{
+		req, err := http.NewRequest("POST", "/v1/ciphers", strings.NewReader(`{
 			"resource_id": "client-cipher-id",
-			"data": "some plaintext"
+			"data": "some plain text"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
 
-		recorder := httptest.NewRecorder()
+		res := httptest.NewRecorder()
 		handler := handlers.CreateCipher{Repository: repo}
-		handler.ServeHTTP(recorder, req)
+		handler.ServeHTTP(res, req)
 
-		Expect(recorder.Code).To(Equal(http.StatusOK), recorder.Body.String())
+		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
 		Expect(repo.StoreCall.Received.Cipher).To(Equal(repository.Cipher{
 			ResourceID: "client-cipher-id",
-			Data:       "some plaintext",
-			Key:        "key for server-cipher-id",
+			Data:       "some plain text",
+			Key:        "key for client-cipher-id",
 		}))
 	})
 })
