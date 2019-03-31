@@ -43,11 +43,12 @@ var _ = Describe("CreateCipher", func() {
 		handler.ServeHTTP(res, req)
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
-		Expect(encrypter.EncryptCall.Received.Plaintext).To(Equal("some plain text"))
+		Expect(encrypter.EncryptCall.Received.PlainText).To(Equal("some plain text"))
 	})
 
 	It("stores the cipher", func() {
 		encrypter.EncryptCall.Returns.Key = "key for client-cipher-id"
+		encrypter.EncryptCall.Returns.CipherText = "some cipher text"
 		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
 
 		handler.ServeHTTP(res, req)
@@ -55,7 +56,7 @@ var _ = Describe("CreateCipher", func() {
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
 		Expect(repo.StoreCall.Received.Cipher).To(Equal(repository.Cipher{
 			ResourceID: "client-cipher-id",
-			Data:       "some plain text",
+			CipherText: "some cipher text",
 			Key:        "key for client-cipher-id",
 		}))
 	})

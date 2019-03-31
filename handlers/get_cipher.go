@@ -50,7 +50,7 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	cipherRes := &getCipherResponse{
 		ResourceID: cipher.ResourceID,
-		Data:       cipher.Data,
+		Data:       cipher.CipherText,
 	}
 
 	resBody, err := json.Marshal(cipherRes)

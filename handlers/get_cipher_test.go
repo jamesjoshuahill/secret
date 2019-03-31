@@ -40,7 +40,7 @@ var _ = Describe("GetCipher", func() {
 	It("retrieves the cipher", func() {
 		repo.FindByResourceIDCall.Returns.Cipher = repository.Cipher{
 			ResourceID: "client-cipher-id",
-			Data:       "some plain text",
+			CipherText: "some plain text",
 			Key:        "key for client-cipher-id",
 		}
 		router.Handle("/v1/ciphers/{resource_id}", &handlers.GetCipher{Repository: repo})

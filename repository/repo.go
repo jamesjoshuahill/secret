@@ -13,7 +13,7 @@ func (r *repo) Store(cipher Cipher) error {
 func (r *repo) FindByResourceID(resourceID string) (Cipher, error) {
 	return Cipher{
 		ResourceID: resourceID,
-		Data:       "some plain text",
+		CipherText: "some plain text",
 		Key:        "key for client-cipher-id",
 	}, nil
 }

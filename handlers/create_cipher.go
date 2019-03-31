@@ -34,11 +34,11 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	key, _, _ := c.Encrypter.Encrypt(reqBody.Data)
+	key, cipherText, _ := c.Encrypter.Encrypt(reqBody.Data)
 
 	err = c.Repository.Store(repository.Cipher{
 		ResourceID: reqBody.ResourceID,
-		Data:       reqBody.Data,
+		CipherText: cipherText,
 		Key:        key,
 	})
 	if err != nil {
