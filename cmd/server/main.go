@@ -6,19 +6,34 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
 	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatalln("Please set PORT")
+	}
 
 	r := mux.NewRouter()
 	r.HandleFunc("/v1/ciphers", createCipherHandler).Methods("POST")
 	http.Handle("/", r)
 
-	err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
-	log.Fatalln(err)
+	srv := &http.Server{
+		Addr:         fmt.Sprintf(":%s", port),
+		Handler:      r,
+		WriteTimeout: time.Second * 15,
+		ReadTimeout:  time.Second * 15,
+		IdleTimeout:  time.Second * 60,
+	}
+
+	log.Printf("Starting server on port %s\n", port)
+	err := srv.ListenAndServe()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 type createCipherRequest struct {
