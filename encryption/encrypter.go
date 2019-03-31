@@ -8,20 +8,24 @@ import (
 	"io"
 )
 
-const hexKey = "6368616e676520746869732070617373776f726420746f206120736563726574"
+const ivHex = "64a9433eae7ccceee2fc0eda"
 
 type Encrypter struct{}
 
 func (Encrypter) Encrypt(plaintext string) (string, string, error) {
-	key, _ := hex.DecodeString(hexKey)
-
-	block, err := aes.NewCipher(key)
+	secretKey := make([]byte, 32)
+	_, err := io.ReadFull(rand.Reader, secretKey)
 	if err != nil {
 		return "", "", err
 	}
 
-	nonce := make([]byte, 12)
-	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+	iv, err := hex.DecodeString(ivHex)
+	if err != nil {
+		return "", "", err
+	}
+
+	block, err := aes.NewCipher(secretKey)
+	if err != nil {
 		return "", "", err
 	}
 
@@ -30,6 +34,6 @@ func (Encrypter) Encrypt(plaintext string) (string, string, error) {
 		return "", "", err
 	}
 
-	cipherText := aesgcm.Seal(nil, nonce, []byte(plaintext), nil)
-	return hex.EncodeToString(nonce), hex.EncodeToString(cipherText), nil
+	cipherText := aesgcm.Seal(nil, iv, []byte(plaintext), nil)
+	return hex.EncodeToString(secretKey), hex.EncodeToString(cipherText), nil
 }

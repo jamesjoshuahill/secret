@@ -9,7 +9,7 @@ import (
 type Decrypter struct{}
 
 func (Decrypter) Decrypt(key, cipherText string) (string, error) {
-	secretKey, err := hex.DecodeString(hexKey)
+	secretKey, err := hex.DecodeString(key)
 	if err != nil {
 		return "", err
 	}
@@ -19,7 +19,7 @@ func (Decrypter) Decrypt(key, cipherText string) (string, error) {
 		return "", err
 	}
 
-	nonce, err := hex.DecodeString(key)
+	iv, err := hex.DecodeString(ivHex)
 	if err != nil {
 		return "", err
 	}
@@ -34,7 +34,7 @@ func (Decrypter) Decrypt(key, cipherText string) (string, error) {
 		return "", err
 	}
 
-	plainText, err := aesgcm.Open(nil, nonce, ciphertext, nil)
+	plainText, err := aesgcm.Open(nil, iv, ciphertext, nil)
 	if err != nil {
 		return "", err
 	}

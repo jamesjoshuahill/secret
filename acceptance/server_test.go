@@ -109,7 +109,7 @@ var _ = Describe("Server", func() {
 
 	It("rejects a get cipher request with the wrong key", func() {
 		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader(`{
-			"key": "aaaaaaaaaaaaaaaaaaaaaaaa"
+			"key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
 
