@@ -38,7 +38,7 @@ var _ = Describe("Server", func() {
 
 	It("accepts a valid create cipher request", func() {
 		res, err := client.Post(serverUrl("v1/ciphers"), "application/json", strings.NewReader(`{
-			"resource_id": "newClient-cipher-id",
+			"resource_id": "client-cipher-id",
 			"data": "some plain text"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
@@ -48,7 +48,7 @@ var _ = Describe("Server", func() {
 		body, err := ioutil.ReadAll(res.Body)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(body).To(MatchJSON(`{
-			"resource_id": "newClient-cipher-id",
+			"resource_id": "client-cipher-id",
 			"key": "key for server-cipher-id"
 		}`))
 	})
@@ -68,7 +68,7 @@ var _ = Describe("Server", func() {
 	})
 
 	It("accepts a valid get cipher request", func() {
-		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/newClient-cipher-id"), strings.NewReader(`{
+		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader(`{
 			"key": "key for server-cipher-id"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
@@ -81,7 +81,7 @@ var _ = Describe("Server", func() {
 		body, err := ioutil.ReadAll(res.Body)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(body).To(MatchJSON(`{
-			"resource_id": "newClient-cipher-id",
+			"resource_id": "client-cipher-id",
 			"data": "some plain text"
 		}`))
 	})
@@ -104,7 +104,7 @@ var _ = Describe("Server", func() {
 	})
 
 	It("rejects a get cipher request with the wrong key", func() {
-		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/newClient-cipher-id"), strings.NewReader(`{
+		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader(`{
 			"key": "wrong key"
 		}`))
 		Expect(err).NotTo(HaveOccurred())

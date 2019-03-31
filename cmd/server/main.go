@@ -33,11 +33,11 @@ func main() {
 	}
 
 	repo := repository.New()
-	handler := api.New(repo)
+	a := api.New(repo)
 
 	r := mux.NewRouter()
-	r.HandleFunc("/v1/ciphers", handler.CreateCipherHandleFunc).Methods("POST")
-	r.HandleFunc("/v1/ciphers/{resource_id}", handler.GetCipherHandleFunc).Methods("GET")
+	r.HandleFunc("/v1/ciphers", a.CreateCipherHandleFunc).Methods("POST")
+	r.HandleFunc("/v1/ciphers/{resource_id}", a.GetCipherHandleFunc).Methods("GET")
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", opts.Port),
