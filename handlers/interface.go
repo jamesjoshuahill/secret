@@ -10,3 +10,7 @@ type Repository interface {
 type Encrypter interface {
 	Encrypt(string) (string, string, error)
 }
+
+type Decrypter interface {
+	Decrypt(string, string) (string, error)
+}

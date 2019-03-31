@@ -18,6 +18,7 @@ type getCipherRequest struct {
 
 type GetCipher struct {
 	Repository Repository
+	Decrypter  Decrypter
 }
 
 func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -44,9 +45,11 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	plainText, _ := g.Decrypter.Decrypt(cipher.Key, cipher.CipherText)
+
 	cipherRes := &getCipherResponse{
 		ResourceID: cipher.ResourceID,
-		Data:       cipher.CipherText,
+		Data:       plainText,
 	}
 
 	resBody, err := json.Marshal(cipherRes)

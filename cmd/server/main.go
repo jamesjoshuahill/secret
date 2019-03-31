@@ -36,10 +36,13 @@ func main() {
 
 	repo := repository.New()
 	encrypter := encryption.Encrypter{}
+	decrypter := encryption.Decrypter{}
+	createCipherHandler := &handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
+	getCipherHandler := &handlers.GetCipher{Repository: repo, Decrypter: decrypter}
 
 	r := mux.NewRouter()
-	r.Handle("/v1/ciphers", &handlers.CreateCipher{Repository: repo, Encrypter: encrypter}).Methods("POST")
-	r.Handle("/v1/ciphers/{resource_id}", &handlers.GetCipher{Repository: repo}).Methods("GET")
+	r.Handle("/v1/ciphers", createCipherHandler).Methods("POST")
+	r.Handle("/v1/ciphers/{resource_id}", getCipherHandler).Methods("GET")
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", opts.Port),
