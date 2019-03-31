@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,9 +13,12 @@ import (
 )
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		log.Fatalln("Please set PORT")
+	port := flag.Int("port", 0, "Port to serve HTTP")
+	flag.Parse()
+
+	if *port == 0 {
+		fmt.Println("--port flag required")
+		os.Exit(1)
 	}
 
 	r := mux.NewRouter()
@@ -22,14 +26,14 @@ func main() {
 	http.Handle("/", r)
 
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%s", port),
+		Addr:         fmt.Sprintf(":%d", *port),
 		Handler:      r,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
 	}
 
-	log.Printf("Starting server on port %s\n", port)
+	log.Printf("Starting server on port %d\n", *port)
 	err := srv.ListenAndServe()
 	if err != nil {
 		log.Fatalln(err)

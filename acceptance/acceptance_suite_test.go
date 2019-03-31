@@ -41,8 +41,7 @@ func TestAcceptance(t *testing.T) {
 }
 
 func startServer(pathToServerBinary string) *gexec.Session {
-	cmd := exec.Command(pathToServerBinary)
-	cmd.Env = []string{fmt.Sprintf("PORT=%d", serverPort)}
+	cmd := exec.Command(pathToServerBinary, fmt.Sprintf("--port=%d", serverPort))
 
 	session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
 	Expect(err).NotTo(HaveOccurred())
