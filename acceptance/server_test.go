@@ -28,7 +28,17 @@ var _ = Describe("Server", func() {
 		))
 	})
 
-	It("fails when flags cannot be parsed", func() {
+	It("fails without the required flags", func() {
+		cmd := exec.Command(pathToServerBinary)
+		session, err := Start(cmd, GinkgoWriter, GinkgoWriter)
+		Expect(err).NotTo(HaveOccurred())
+		Eventually(session).Should(Exit(1))
+		Expect(session.Err).To(SatisfyAll(
+			Say("the required flags `--cert', `--key' and `--port' were not specified"),
+		))
+	})
+
+	It("fails when a flag cannot be parsed", func() {
 		cmd := exec.Command(pathToServerBinary, "--port=not-an-int")
 		session, err := Start(cmd, GinkgoWriter, GinkgoWriter)
 		Expect(err).NotTo(HaveOccurred())
