@@ -29,10 +29,16 @@ func (c *client) Store(id, payload []byte) ([]byte, error) {
 		Data: string(payload),
 	}
 
-	res, _ := c.do("POST", c.baseURL+ciphersResourcePath, reqBody)
+	res, err := c.do("POST", c.baseURL+ciphersResourcePath, reqBody)
+	if err != nil {
+		return nil, fmt.Errorf("create cipher request: %s", err)
+	}
 
 	var body handlers.CreateCipherResponse
-	_ = json.NewDecoder(res.Body).Decode(&body)
+	err = json.NewDecoder(res.Body).Decode(&body)
+	if err != nil {
+		return nil, fmt.Errorf("decoding create cipher response body: %s", err)
+	}
 
 	return []byte(body.Key), nil
 }
@@ -52,9 +58,15 @@ func (c *client) Retrieve(id, aesKey []byte) ([]byte, error) {
 }
 
 func (c *client) do(method, url string, body interface{}) (*http.Response, error) {
-	b, _ := json.Marshal(body)
+	b, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
 
-	req, _ := http.NewRequest(method, url, bytes.NewReader(b))
+	req, err := http.NewRequest(method, url, bytes.NewReader(b))
+	if err != nil {
+		return nil, err
+	}
 	req.Header.Set("Content-Type", "application/json")
 
 	return c.httpsClient.Do(req)

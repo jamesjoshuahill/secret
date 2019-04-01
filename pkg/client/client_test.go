@@ -1,7 +1,13 @@
 package client_test
 
 import (
+	"errors"
+	"io/ioutil"
+	"net/http"
+	"strings"
+
 	"github.com/jamesjoshuahill/ciphers/pkg/client"
+	"github.com/jamesjoshuahill/ciphers/pkg/client/fakes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -19,9 +25,57 @@ type Client interface {
 }
 
 var _ = Describe("Client", func() {
-	It("is a client", func() {
-		var c Client
-		c = client.New("", nil)
-		Expect(c).NotTo(BeNil())
+	const baseURL = "https://example.com:8080"
+	var (
+		c           Client
+		httpsClient *fakes.FakeHTTPSClient
+	)
+
+	BeforeEach(func() {
+		httpsClient = new(fakes.FakeHTTPSClient)
+		c = client.New(baseURL, httpsClient)
+	})
+
+	Context("Store", func() {
+		It("makes valid create cipher requests", func() {
+			httpsClient.DoCall.Returns.Response = &http.Response{
+				Body: ioutil.NopCloser(strings.NewReader(`{"key":"some-key"}`)),
+			}
+
+			_, err := c.Store([]byte("some-id"), []byte("some-payload"))
+
+			Expect(err).NotTo(HaveOccurred())
+			req := httpsClient.DoCall.Received.Request
+			Expect(req.Header.Get("Content-Type")).To(Equal("application/json"))
+			body, err := ioutil.ReadAll(req.Body)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(body).To(MatchJSON(`{
+			"id": "some-id",
+			"data": "some-payload"
+		}`))
+		})
+
+		It("fails when the request errors", func() {
+			httpsClient.DoCall.Returns.Error = errors.New("fake error")
+
+			_, err := c.Store([]byte("some-id"), []byte("some-payload"))
+
+			Expect(err).To(MatchError(SatisfyAll(
+				ContainSubstring("create cipher request"),
+				ContainSubstring("fake error"),
+			)))
+		})
+
+		It("fails when the response cannot be parsed", func() {
+			httpsClient.DoCall.Returns.Response = &http.Response{
+				Body: ioutil.NopCloser(strings.NewReader("not json")),
+			}
+
+			_, err := c.Store([]byte("some-id"), []byte("some-payload"))
+
+			Expect(err).To(MatchError(SatisfyAll(
+				ContainSubstring("decoding create cipher response body"),
+			)))
+		})
 	})
 })
