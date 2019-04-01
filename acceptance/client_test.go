@@ -18,7 +18,7 @@ var _ = Describe("Client", func() {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(key).NotTo(BeEmpty())
 
-		By("retreiving a cipher")
+		By("retrieving a cipher")
 		actualPayload, err := c.Retrieve(id, key)
 
 		Expect(err).NotTo(HaveOccurred())
