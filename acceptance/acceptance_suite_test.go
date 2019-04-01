@@ -1,7 +1,6 @@
 package acceptance_test
 
 import (
-	"crypto/tls"
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
@@ -9,6 +8,8 @@ import (
 	"net/http"
 	"os/exec"
 	"testing"
+
+	"github.com/jamesjoshuahill/ciphers/pkg/client"
 
 	"github.com/onsi/gomega/gexec"
 
@@ -84,11 +85,5 @@ func newClient() *http.Client {
 	ok := certPool.AppendCertsFromPEM(rootCA)
 	Expect(ok).To(BeTrue(), "failed to append root CA cert")
 
-	return &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				RootCAs: certPool,
-			},
-		},
-	}
+	return client.DefaultHTTPSClient(certPool)
 }

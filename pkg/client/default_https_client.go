@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func DefaultHTTPSClient(certPool *x509.CertPool) HTTPSClient {
+func DefaultHTTPSClient(certPool *x509.CertPool) *http.Client {
 	transport := http.DefaultTransport.(*http.Transport)
 	transport.TLSClientConfig = &tls.Config{
 		RootCAs: certPool,
