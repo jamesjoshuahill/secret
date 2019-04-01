@@ -37,8 +37,16 @@ type unexpectedError interface {
 	Message() string
 }
 
-type alreadyExistsError interface {
+type alreadyExists interface {
 	AlreadyExists() bool
+}
+
+type notFound interface {
+	NotFound() bool
+}
+
+type wrongKey interface {
+	WrongKey() bool
 }
 
 func TestClient(t *testing.T) {

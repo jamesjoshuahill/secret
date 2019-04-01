@@ -12,7 +12,8 @@ import (
 var _ = Describe("Retrieve", func() {
 	It("makes valid get cipher requests", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
-			Body: readCloser(`{"data":"some-payload"}`),
+			StatusCode: http.StatusOK,
+			Body:       readCloser(`{"data":"some-payload"}`),
 		}
 
 		actualPayload, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
@@ -40,9 +41,63 @@ var _ = Describe("Retrieve", func() {
 		)))
 	})
 
+	It("fails when response is not unexpected", func() {
+		httpsClient.DoCall.Returns.Response = &http.Response{
+			StatusCode: http.StatusInternalServerError,
+			Body:       readCloser(`{"error":"fake error"}`),
+		}
+
+		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
+
+		Expect(err).To(HaveOccurred())
+		unerr := err.(unexpectedError)
+		Expect(unerr.StatusCode()).To(Equal(http.StatusInternalServerError))
+		Expect(unerr.Message()).To(Equal("fake error"))
+	})
+
+	It("fails when the response is not unexpected and malformed", func() {
+		httpsClient.DoCall.Returns.Response = &http.Response{
+			StatusCode: http.StatusInternalServerError,
+			Body:       readCloser("not json"),
+		}
+
+		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
+
+		Expect(err).To(HaveOccurred())
+		unerr := err.(unexpectedError)
+		Expect(unerr.StatusCode()).To(Equal(http.StatusInternalServerError))
+	})
+
+	It("fails when the cipher cannot be found", func() {
+		httpsClient.DoCall.Returns.Response = &http.Response{
+			StatusCode: http.StatusNotFound,
+			Body:       readCloser(`{"error":"not found"}`),
+		}
+
+		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
+
+		Expect(err).To(HaveOccurred())
+		nferr := err.(notFound)
+		Expect(nferr.NotFound()).To(BeTrue())
+	})
+
+	It("fails when the key is wrong", func() {
+		httpsClient.DoCall.Returns.Response = &http.Response{
+			StatusCode: http.StatusUnauthorized,
+			Body:       readCloser(`{"error":"wrong key"}`),
+		}
+
+		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
+
+		Expect(err).To(HaveOccurred())
+		wkerr := err.(wrongKey)
+		Expect(wkerr.WrongKey()).To(BeTrue())
+	})
+
 	It("fails when the response cannot be parsed", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
-			Body: readCloser("not json"),
+			StatusCode: http.StatusOK,
+			Body:       readCloser("not json"),
 		}
 
 		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))

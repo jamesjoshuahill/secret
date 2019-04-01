@@ -78,7 +78,7 @@ var _ = Describe("Store", func() {
 		_, err := c.Store([]byte("some-id"), []byte("some-payload"))
 
 		Expect(err).To(HaveOccurred())
-		unerr := err.(alreadyExistsError)
+		unerr := err.(alreadyExists)
 		Expect(unerr.AlreadyExists()).To(BeTrue())
 	})
 

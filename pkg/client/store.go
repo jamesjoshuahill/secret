@@ -31,15 +31,6 @@ func (c *client) Store(id, payload []byte) ([]byte, error) {
 	case http.StatusConflict:
 		return nil, alreadyExistsError{}
 	default:
-		unerr := unexpectedError{statusCode: res.StatusCode}
-
-		var body handlers.ErrorResponse
-		err = json.NewDecoder(res.Body).Decode(&body)
-		if err != nil {
-			return nil, unerr
-		}
-
-		unerr.message = body.Message
-		return nil, unerr
+		return nil, newUnexpectedError(res)
 	}
 }
