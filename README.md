@@ -18,7 +18,7 @@ export GO111MODULE=on
 or elsewhere:
 
 ```bash
-git clone git@github.com:jamesjoshuahill/ciphers.git
+git clone https://github.com/jamesjoshuahill/ciphers.git
 ```
 
 ## Test
