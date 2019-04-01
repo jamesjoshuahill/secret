@@ -5,14 +5,14 @@ import (
 	"net/http"
 )
 
-type errorResponse struct {
+type ErrorResponse struct {
 	Message string `json:"error"`
 }
 
 func writeError(w http.ResponseWriter, code int, msg string) {
 	w.WriteHeader(code)
 
-	errRes := errorResponse{
+	errRes := ErrorResponse{
 		Message: msg,
 	}
 

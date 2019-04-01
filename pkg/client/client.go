@@ -34,6 +34,19 @@ func (c *client) Store(id, payload []byte) ([]byte, error) {
 		return nil, fmt.Errorf("create cipher request: %s", err)
 	}
 
+	if res.StatusCode != http.StatusOK {
+		unerr := unexpectedError{statusCode: res.StatusCode}
+
+		var body handlers.ErrorResponse
+		err = json.NewDecoder(res.Body).Decode(&body)
+		if err != nil {
+			return nil, unerr
+		}
+
+		unerr.message = body.Message
+		return nil, unerr
+	}
+
 	var body handlers.CreateCipherResponse
 	err = json.NewDecoder(res.Body).Decode(&body)
 	if err != nil {

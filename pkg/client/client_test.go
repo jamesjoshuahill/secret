@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
-	"strings"
 
 	"github.com/jamesjoshuahill/ciphers/pkg/client"
 	"github.com/jamesjoshuahill/ciphers/pkg/client/fakes"
@@ -24,6 +23,11 @@ type Client interface {
 	Retrieve(id, aesKey []byte) (payload []byte, err error)
 }
 
+type unexpectedError interface {
+	StatusCode() int
+	Message() string
+}
+
 var _ = Describe("Client", func() {
 	const baseURL = "https://example.com:8080"
 
@@ -40,7 +44,8 @@ var _ = Describe("Client", func() {
 	Context("Store", func() {
 		It("makes valid create cipher requests", func() {
 			httpsClient.DoCall.Returns.Response = &http.Response{
-				Body: ioutil.NopCloser(strings.NewReader(`{"key":"some-key"}`)),
+				StatusCode: http.StatusOK,
+				Body:       readCloser(`{"key":"some-key"}`),
 			}
 
 			key, err := c.Store([]byte("some-id"), []byte("some-payload"))
@@ -69,23 +74,51 @@ var _ = Describe("Client", func() {
 			)))
 		})
 
-		It("fails when the response cannot be parsed", func() {
+		It("fails when response is not unexpected", func() {
 			httpsClient.DoCall.Returns.Response = &http.Response{
-				Body: ioutil.NopCloser(strings.NewReader("not json")),
+				StatusCode: http.StatusInternalServerError,
+				Body:       readCloser(`{"error":"fake error"}`),
 			}
 
 			_, err := c.Store([]byte("some-id"), []byte("some-payload"))
 
-			Expect(err).To(MatchError(SatisfyAll(
+			Expect(err).To(HaveOccurred())
+			unerr := err.(unexpectedError)
+			Expect(unerr.StatusCode()).To(Equal(http.StatusInternalServerError))
+			Expect(unerr.Message()).To(Equal("fake error"))
+		})
+
+		It("fails when the response is not unexpected and malformed", func() {
+			httpsClient.DoCall.Returns.Response = &http.Response{
+				StatusCode: http.StatusInternalServerError,
+				Body:       readCloser("not json"),
+			}
+
+			_, err := c.Store([]byte("some-id"), []byte("some-payload"))
+
+			Expect(err).To(HaveOccurred())
+			unerr := err.(unexpectedError)
+			Expect(unerr.StatusCode()).To(Equal(http.StatusInternalServerError))
+		})
+
+		It("fails when the response cannot be parsed", func() {
+			httpsClient.DoCall.Returns.Response = &http.Response{
+				StatusCode: http.StatusOK,
+				Body:       readCloser("not json"),
+			}
+
+			_, err := c.Store([]byte("some-id"), []byte("some-payload"))
+
+			Expect(err).To(MatchError(
 				ContainSubstring("decoding create cipher response body"),
-			)))
+			))
 		})
 	})
 
 	Context("Retrieve", func() {
 		It("makes valid get cipher requests", func() {
 			httpsClient.DoCall.Returns.Response = &http.Response{
-				Body: ioutil.NopCloser(strings.NewReader(`{"data":"some-payload"}`)),
+				Body: readCloser(`{"data":"some-payload"}`),
 			}
 
 			actualPayload, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
@@ -115,14 +148,14 @@ var _ = Describe("Client", func() {
 
 		It("fails when the response cannot be parsed", func() {
 			httpsClient.DoCall.Returns.Response = &http.Response{
-				Body: ioutil.NopCloser(strings.NewReader("not json")),
+				Body: readCloser("not json"),
 			}
 
 			_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
 
-			Expect(err).To(MatchError(SatisfyAll(
+			Expect(err).To(MatchError(
 				ContainSubstring("decoding get cipher response body"),
-			)))
+			))
 		})
 	})
 })
