@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/jamesjoshuahill/ciphers/handlers"
@@ -12,20 +11,15 @@ import (
 
 const ciphersResourcePath = "/v1/ciphers"
 
-type ServerClient interface {
-	Post(url, contentType string, body io.Reader) (resp *http.Response, err error)
-	Do(req *http.Request) (*http.Response, error)
-}
-
 type client struct {
-	baseURL      string
-	serverClient ServerClient
+	baseURL     string
+	httpsClient HTTPSClient
 }
 
-func New(baseURL string, serverClient ServerClient) *client {
+func New(baseURL string, httpsClient HTTPSClient) *client {
 	return &client{
-		baseURL:      baseURL,
-		serverClient: serverClient,
+		baseURL:     baseURL,
+		httpsClient: httpsClient,
 	}
 }
 
@@ -35,9 +29,7 @@ func (c *client) Store(id, payload []byte) ([]byte, error) {
 		Data: string(payload),
 	}
 
-	reqBytes, _ := json.Marshal(&reqBody)
-
-	res, _ := c.serverClient.Post(c.baseURL+ciphersResourcePath, "application/json", bytes.NewReader(reqBytes))
+	res, _ := c.do("POST", c.baseURL+ciphersResourcePath, reqBody)
 
 	var body handlers.CreateCipherResponse
 	_ = json.NewDecoder(res.Body).Decode(&body)
@@ -50,16 +42,20 @@ func (c *client) Retrieve(id, aesKey []byte) ([]byte, error) {
 		Key: string(aesKey),
 	}
 
-	reqBytes, _ := json.Marshal(&reqBody)
-
 	url := fmt.Sprintf("%s%s/%s", c.baseURL, ciphersResourcePath, string(id))
-	req, _ := http.NewRequest("GET", url, bytes.NewReader(reqBytes))
-	req.Header.Set("Content-Type", "application/json")
-
-	res, _ := c.serverClient.Do(req)
+	res, _ := c.do("GET", url, reqBody)
 
 	var body handlers.GetCipherResponse
 	_ = json.NewDecoder(res.Body).Decode(&body)
 
 	return []byte(body.Data), nil
+}
+
+func (c *client) do(method, url string, body interface{}) (*http.Response, error) {
+	b, _ := json.Marshal(body)
+
+	req, _ := http.NewRequest(method, url, bytes.NewReader(b))
+	req.Header.Set("Content-Type", "application/json")
+
+	return c.httpsClient.Do(req)
 }
