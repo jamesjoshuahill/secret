@@ -11,23 +11,6 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-// Client provides functionality to interact with the encryption-server
-type Client interface {
-	// Store accepts an id and a payload in bytes and requests that the
-	// encryption-server stores them in its data store
-	Store(id, payload []byte) (aesKey []byte, err error)
-
-	// Retrieve accepts an id and an AES key, and requests that the
-	// encryption-server retrieves the original (decrypted) bytes stored
-	// with the provided id
-	Retrieve(id, aesKey []byte) (payload []byte, err error)
-}
-
-type unexpectedError interface {
-	StatusCode() int
-	Message() string
-}
-
 var _ = Describe("Client", func() {
 	const baseURL = "https://example.com:8080"
 
@@ -99,6 +82,19 @@ var _ = Describe("Client", func() {
 			Expect(err).To(HaveOccurred())
 			unerr := err.(unexpectedError)
 			Expect(unerr.StatusCode()).To(Equal(http.StatusInternalServerError))
+		})
+
+		It("fails when the cipher already exists", func() {
+			httpsClient.DoCall.Returns.Response = &http.Response{
+				StatusCode: http.StatusConflict,
+				Body:       readCloser(`{"error":"cipher already exists"}`),
+			}
+
+			_, err := c.Store([]byte("some-id"), []byte("some-payload"))
+
+			Expect(err).To(HaveOccurred())
+			unerr := err.(alreadyExistsError)
+			Expect(unerr.AlreadyExists()).To(BeTrue())
 		})
 
 		It("fails when the response cannot be parsed", func() {

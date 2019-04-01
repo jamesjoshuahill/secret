@@ -34,7 +34,18 @@ func (c *client) Store(id, payload []byte) ([]byte, error) {
 		return nil, fmt.Errorf("create cipher request: %s", err)
 	}
 
-	if res.StatusCode != http.StatusOK {
+	switch res.StatusCode {
+	case http.StatusOK:
+		var body handlers.CreateCipherResponse
+		err = json.NewDecoder(res.Body).Decode(&body)
+		if err != nil {
+			return nil, fmt.Errorf("decoding create cipher response body: %s", err)
+		}
+
+		return []byte(body.Key), nil
+	case http.StatusConflict:
+		return nil, alreadyExistsError{}
+	default:
 		unerr := unexpectedError{statusCode: res.StatusCode}
 
 		var body handlers.ErrorResponse
@@ -46,14 +57,6 @@ func (c *client) Store(id, payload []byte) ([]byte, error) {
 		unerr.message = body.Message
 		return nil, unerr
 	}
-
-	var body handlers.CreateCipherResponse
-	err = json.NewDecoder(res.Body).Decode(&body)
-	if err != nil {
-		return nil, fmt.Errorf("decoding create cipher response body: %s", err)
-	}
-
-	return []byte(body.Key), nil
 }
 
 func (c *client) Retrieve(id, aesKey []byte) ([]byte, error) {

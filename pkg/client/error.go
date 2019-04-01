@@ -18,3 +18,13 @@ func (e unexpectedError) StatusCode() int {
 func (e unexpectedError) Message() string {
 	return e.message
 }
+
+type alreadyExistsError struct{}
+
+func (e alreadyExistsError) Error() string {
+	return fmt.Sprintf("cipher already exists")
+}
+
+func (e alreadyExistsError) AlreadyExists() bool {
+	return true
+}
