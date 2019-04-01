@@ -1,4 +1,10 @@
-package client
+package client_test
+
+import (
+	"github.com/jamesjoshuahill/ciphers/pkg/client"
+	. "github.com/onsi/ginkgo"
+	."github.com/onsi/gomega"
+)
 
 // Client provides functionality to interact with the encryption-server
 type Client interface {
@@ -11,3 +17,11 @@ type Client interface {
 	// with the provided id
 	Retrieve(id, aesKey []byte) (payload []byte, err error)
 }
+
+var _ = Describe("Client", func() {
+	It("is a client", func() {
+		var c Client
+		c = client.New()
+		Expect(c).NotTo(BeNil())
+	})
+})
