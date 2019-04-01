@@ -1,3 +1,4 @@
+// Package client provides a client for the cipher server.
 package client
 
 import (
@@ -13,6 +14,7 @@ type client struct {
 	httpsClient HTTPSClient
 }
 
+// New returns a client struct with the given server base URL and HTTPS client.
 func New(baseURL string, httpsClient HTTPSClient) *client {
 	return &client{
 		baseURL:     baseURL,

@@ -8,6 +8,8 @@ import (
 	"github.com/jamesjoshuahill/ciphers/handlers"
 )
 
+// Store sends an HTTP request to create a cipher of the payload with an id,
+// and returns the aesKey.
 func (c *client) Store(id, payload []byte) ([]byte, error) {
 	reqBody := handlers.CreateCipherRequest{
 		ID:   string(id),

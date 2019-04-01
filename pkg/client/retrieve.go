@@ -8,6 +8,8 @@ import (
 	"github.com/jamesjoshuahill/ciphers/handlers"
 )
 
+// Retrieve sends an HTTP request to get the cipher using and id and aesKey,
+// and returns the decrypted plain text.
 func (c *client) Retrieve(id, aesKey []byte) ([]byte, error) {
 	reqBody := handlers.GetCipherRequest{
 		Key: string(aesKey),
