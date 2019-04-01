@@ -49,6 +49,12 @@ go run cmd/server/main.go \
   --key acceptance/fixtures/key.pem
 ```
 
+## Client
+
+The `client` package provides a `Client` to interact with the server.
+
+Please see the [documentation](https://godoc.org/github.com/jamesjoshuahill/ciphers/pkg/client) for details.
+
 ## API
 
 This micro service provides two endpoints that accept and provide JSON.
