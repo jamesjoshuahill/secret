@@ -1,4 +1,4 @@
-// Package client provides a client for the cipher server.
+// Package Client provides a Client for the cipher server.
 package client
 
 import (
@@ -9,20 +9,20 @@ import (
 
 const ciphersResourcePath = "/v1/ciphers"
 
-type client struct {
+type Client struct {
 	baseURL     string
 	httpsClient HTTPSClient
 }
 
-// New returns a client struct with the given server base URL and HTTPS client.
-func New(baseURL string, httpsClient HTTPSClient) *client {
-	return &client{
+// New returns a Client struct with the given baseURL of the server and HTTPSClient.
+func New(baseURL string, httpsClient HTTPSClient) *Client {
+	return &Client{
 		baseURL:     baseURL,
 		httpsClient: httpsClient,
 	}
 }
 
-func (c *client) do(method, url string, body interface{}) (*http.Response, error) {
+func (c *Client) do(method, url string, body interface{}) (*http.Response, error) {
 	b, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
