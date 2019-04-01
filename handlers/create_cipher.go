@@ -9,12 +9,12 @@ import (
 
 const contentTypeJSON = "application/json"
 
-type createCipherRequest struct {
+type CreateCipherRequest struct {
 	Data string `json:"data"`
 	ID   string `json:"id"`
 }
 
-type createCipherResponse struct {
+type CreateCipherResponse struct {
 	Key string `json:"key"`
 }
 
@@ -33,7 +33,7 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", contentTypeJSON)
 
-	reqBody := &createCipherRequest{}
+	reqBody := &CreateCipherRequest{}
 	err := json.NewDecoder(r.Body).Decode(reqBody)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "decoding request body")
@@ -55,7 +55,7 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cipherRes := createCipherResponse{
+	cipherRes := CreateCipherResponse{
 		Key: key,
 	}
 

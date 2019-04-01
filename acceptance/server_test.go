@@ -51,7 +51,7 @@ var _ = Describe("Server", func() {
 	It("creates and stores ciphers", func() {
 		var key string
 		By("accepting a valid create cipher request", func() {
-			res, err := client.Post(serverUrl("v1/ciphers"), "application/json", strings.NewReader(`{
+			res, err := httpsClient.Post(serverUrl("v1/ciphers"), "application/json", strings.NewReader(`{
 				"id": "client-cipher-id",
 				"data": "some plain text"
 			}`))
@@ -74,7 +74,7 @@ var _ = Describe("Server", func() {
 			Expect(err).NotTo(HaveOccurred())
 			req.Header.Set("Content-Type", "application/json")
 
-			res, err := client.Do(req)
+			res, err := httpsClient.Do(req)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(res.StatusCode).To(Equal(http.StatusOK))
 			Expect(res.Header.Get("Content-Type")).To(Equal("application/json"))
@@ -88,7 +88,7 @@ var _ = Describe("Server", func() {
 	})
 
 	It("rejects a malformed create cipher request", func() {
-		res, err := client.Post(serverUrl("v1/ciphers"), "application/json", strings.NewReader("not json"))
+		res, err := httpsClient.Post(serverUrl("v1/ciphers"), "application/json", strings.NewReader("not json"))
 		Expect(err).NotTo(HaveOccurred())
 		Expect(res.StatusCode).To(Equal(http.StatusBadRequest))
 		Expect(res.Header.Get("Content-Type")).To(Equal("application/json"))
@@ -106,7 +106,7 @@ var _ = Describe("Server", func() {
 		Expect(err).NotTo(HaveOccurred())
 		req.Header.Set("Content-Type", "application/json")
 
-		res, err := client.Do(req)
+		res, err := httpsClient.Do(req)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(res.StatusCode).To(Equal(http.StatusBadRequest))
 		Expect(res.Header.Get("Content-Type")).To(Equal("application/json"))
@@ -126,7 +126,7 @@ var _ = Describe("Server", func() {
 		Expect(err).NotTo(HaveOccurred())
 		req.Header.Set("Content-Type", "application/json")
 
-		res, err := client.Do(req)
+		res, err := httpsClient.Do(req)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(res.StatusCode).To(Equal(http.StatusUnauthorized))
 		Expect(res.Header.Get("Content-Type")).To(Equal("application/json"))

@@ -20,7 +20,7 @@ const serverPort = 8080
 
 var (
 	pathToServerBinary string
-	client             *http.Client
+	httpsClient        *http.Client
 )
 
 func TestAcceptance(t *testing.T) {
@@ -35,7 +35,7 @@ func TestAcceptance(t *testing.T) {
 
 		Eventually(dialServer).Should(Succeed())
 
-		client = newClient()
+		httpsClient = newClient()
 	})
 
 	AfterSuite(func() {
@@ -68,7 +68,11 @@ func dialServer() error {
 }
 
 func serverUrl(path string) string {
-	return fmt.Sprintf("https://127.0.0.1:%d/%s", serverPort, path)
+	return fmt.Sprintf("%s/%s", serverBaseURL(), path)
+}
+
+func serverBaseURL() string {
+	return fmt.Sprintf("https://127.0.0.1:%d", serverPort)
 }
 
 func newClient() *http.Client {

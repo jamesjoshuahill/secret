@@ -3,7 +3,7 @@ package client_test
 import (
 	"github.com/jamesjoshuahill/ciphers/pkg/client"
 	. "github.com/onsi/ginkgo"
-	."github.com/onsi/gomega"
+	. "github.com/onsi/gomega"
 )
 
 // Client provides functionality to interact with the encryption-server
@@ -21,7 +21,7 @@ type Client interface {
 var _ = Describe("Client", func() {
 	It("is a client", func() {
 		var c Client
-		c = client.New()
+		c = client.New("", nil)
 		Expect(c).NotTo(BeNil())
 	})
 })
