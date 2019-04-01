@@ -2,6 +2,7 @@ package handlers_test
 
 import (
 	"errors"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -77,6 +78,16 @@ var _ = Describe("GetCipher", func() {
 		Expect(res.Body.String()).To(ContainSubstring("unsupported Content-Type"))
 	})
 
+	It("fails when the request body cannot be parsed", func() {
+		req.Body = ioutil.NopCloser(strings.NewReader("not json"))
+		router.Handle("/v1/ciphers/{id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
+
+		router.ServeHTTP(res, req)
+
+		Expect(res.Code).To(Equal(http.StatusBadRequest), res.Body.String())
+		Expect(res.Body.String()).To(ContainSubstring("decoding request body"))
+	})
+
 	It("fails when the cipher is not found", func() {
 		repo.FindByResourceIDCall.Returns.Error = errors.New("fake error")
 		router.Handle("/v1/ciphers/{id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
@@ -85,5 +96,15 @@ var _ = Describe("GetCipher", func() {
 
 		Expect(res.Code).To(Equal(http.StatusNotFound), res.Body.String())
 		Expect(res.Body.String()).To(ContainSubstring("not found"))
+	})
+
+	It("fails when the cipher cannot be decrypted", func() {
+		decrypter.DecryptCall.Returns.Error = errors.New("fake error")
+		handler := handlers.GetCipher{Repository: repo, Decrypter: decrypter}
+
+		handler.ServeHTTP(res, req)
+
+		Expect(res.Code).To(Equal(http.StatusUnauthorized))
+		Expect(res.Body.String()).To(ContainSubstring("wrong key"))
 	})
 })

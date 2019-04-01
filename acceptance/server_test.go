@@ -86,58 +86,6 @@ var _ = Describe("Server", func() {
 			}`))
 		})
 	})
-
-	It("rejects a malformed create cipher request", func() {
-		res, err := httpsClient.Post(serverUrl("v1/ciphers"), "application/json", strings.NewReader("not json"))
-		Expect(err).NotTo(HaveOccurred())
-		Expect(res.StatusCode).To(Equal(http.StatusBadRequest))
-		Expect(res.Header.Get("Content-Type")).To(Equal("application/json"))
-
-		body, err := ioutil.ReadAll(res.Body)
-		Expect(err).NotTo(HaveOccurred())
-		Expect(string(body)).To(SatisfyAll(
-			ContainSubstring("error"),
-			ContainSubstring("decoding request body"),
-		))
-	})
-
-	It("rejects a malformed get cipher request", func() {
-		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader("not json"))
-		Expect(err).NotTo(HaveOccurred())
-		req.Header.Set("Content-Type", "application/json")
-
-		res, err := httpsClient.Do(req)
-		Expect(err).NotTo(HaveOccurred())
-		Expect(res.StatusCode).To(Equal(http.StatusBadRequest))
-		Expect(res.Header.Get("Content-Type")).To(Equal("application/json"))
-
-		body, err := ioutil.ReadAll(res.Body)
-		Expect(err).NotTo(HaveOccurred())
-		Expect(string(body)).To(SatisfyAll(
-			ContainSubstring("error"),
-			ContainSubstring("decoding request body"),
-		))
-	})
-
-	It("rejects a get cipher request with the wrong key", func() {
-		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader(`{
-			"key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-		}`))
-		Expect(err).NotTo(HaveOccurred())
-		req.Header.Set("Content-Type", "application/json")
-
-		res, err := httpsClient.Do(req)
-		Expect(err).NotTo(HaveOccurred())
-		Expect(res.StatusCode).To(Equal(http.StatusUnauthorized))
-		Expect(res.Header.Get("Content-Type")).To(Equal("application/json"))
-
-		body, err := ioutil.ReadAll(res.Body)
-		Expect(err).NotTo(HaveOccurred())
-		Expect(string(body)).To(SatisfyAll(
-			ContainSubstring("error"),
-			ContainSubstring("wrong key"),
-		))
-	})
 })
 
 type createCipherResponseBody struct {

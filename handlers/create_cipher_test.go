@@ -2,6 +2,7 @@ package handlers_test
 
 import (
 	"errors"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -55,6 +56,16 @@ var _ = Describe("CreateCipher", func() {
 
 		Expect(res.Code).To(Equal(http.StatusUnsupportedMediaType))
 		Expect(res.Body.String()).To(ContainSubstring("unsupported Content-Type"))
+	})
+
+	It("fails when the request body cannot be parsed", func() {
+		req.Body = ioutil.NopCloser(strings.NewReader("not json"))
+		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
+
+		handler.ServeHTTP(res, req)
+
+		Expect(res.Code).To(Equal(http.StatusBadRequest))
+		Expect(res.Body.String()).To(ContainSubstring("decoding request body"))
 	})
 
 	It("fails when the plain text cannot be encrypted", func() {
