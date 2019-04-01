@@ -86,6 +86,10 @@ curl \
 
 Status code: `200 OK`
 
+Headers:
+
+- `Content-Type: application/json`
+
 Body:
 
 | Attribute | Type   | Description                                      |
@@ -129,6 +133,10 @@ curl \
 
 Status code: `200 OK`
 
+Headers:
+
+- `Content-Type: application/json`
+
 Body:
 
 | Attribute | Type   | Description          |
@@ -145,6 +153,10 @@ Example response body:
 ### Error responses
 
 Status code: `4xx–5xx`
+
+Headers:
+
+- `Content-Type: application/json`
 
 Body:
 
