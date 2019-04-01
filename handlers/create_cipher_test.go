@@ -34,6 +34,7 @@ var _ = Describe("CreateCipher", func() {
 			"data": "some plain text"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
+		req.Header.Set("Content-Type", "application/json")
 	})
 
 	It("encrypts the plain text", func() {
@@ -44,6 +45,16 @@ var _ = Describe("CreateCipher", func() {
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
 		Expect(encrypter.EncryptCall.Received.PlainText).To(Equal("some plain text"))
+	})
+
+	It("fails when the request content type is not JSON", func() {
+		req.Header.Set("Content-Type", "text/plain")
+		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
+
+		handler.ServeHTTP(res, req)
+
+		Expect(res.Code).To(Equal(http.StatusUnsupportedMediaType))
+		Expect(res.Body.String()).To(ContainSubstring("unsupported Content-Type"))
 	})
 
 	It("fails when the plain text cannot be encrypted", func() {

@@ -37,6 +37,7 @@ var _ = Describe("GetCipher", func() {
 			"key": "key for client-cipher-id"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
+		req.Header.Set("Content-Type", "application/json")
 	})
 
 	It("retrieves the cipher", func() {
@@ -64,6 +65,16 @@ var _ = Describe("GetCipher", func() {
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
 		Expect(decrypter.DecryptCall.Received.Key).To(Equal("key for client-cipher-id"))
 		Expect(decrypter.DecryptCall.Received.CipherText).To(Equal("some cipher text"))
+	})
+
+	It("fails when the request content type is not JSON", func() {
+		req.Header.Set("Content-Type", "text/plain")
+		handler := handlers.GetCipher{Repository: repo, Decrypter: decrypter}
+
+		handler.ServeHTTP(res, req)
+
+		Expect(res.Code).To(Equal(http.StatusUnsupportedMediaType))
+		Expect(res.Body.String()).To(ContainSubstring("unsupported Content-Type"))
 	})
 
 	It("fails when the cipher is not found", func() {

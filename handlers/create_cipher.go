@@ -7,6 +7,8 @@ import (
 	"github.com/jamesjoshuahill/ciphers/repository"
 )
 
+const contentTypeJSON = "application/json"
+
 type createCipherRequest struct {
 	Data string `json:"data"`
 	ID   string `json:"id"`
@@ -22,7 +24,14 @@ type CreateCipher struct {
 }
 
 func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	contentType := r.Header.Get("Content-Type")
+
+	if contentType != contentTypeJSON {
+		writeError(w, http.StatusUnsupportedMediaType, "unsupported Content-Type")
+		return
+	}
+
+	w.Header().Set("Content-Type", contentTypeJSON)
 
 	reqBody := &createCipherRequest{}
 	err := json.NewDecoder(r.Body).Decode(reqBody)

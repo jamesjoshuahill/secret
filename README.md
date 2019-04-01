@@ -61,6 +61,10 @@ _Clients are responsible for storing the id and AES key in order to get the ciph
 
 Endpoint: `POST /v1/ciphers`
 
+Headers:
+
+- `Content-Type: application/json`
+
 Body:
 
 | Attribute | Type   | Description               |
@@ -74,6 +78,7 @@ curl \
   --cacert acceptance/fixtures/cert.pem \
   https://127.0.0.1:8080/v1/ciphers \
   -X POST \
+  -H 'Content-Type: application/json' \
   -d '{"id":"some-id","data":"some plain text"}'
 ```
 
@@ -100,6 +105,10 @@ Example response body:
 
 Endpoint: `GET /v1/ciphers/{id}`
 
+Headers:
+
+- `Content-Type: application/json`
+
 Body:
 
 | Attribute | Type   | Description                                       |
@@ -112,6 +121,7 @@ curl \
   --cacert acceptance/fixtures/cert.pem \
   https://127.0.0.1:8080/v1/ciphers/some-id \
   -X GET \
+  -H 'Content-Type: application/json' \
   -d '{"key":"1bc50ee2992feba6c1d9e384b3c8e9203dcfc0eed50c032dfc2821ca2aa0cfa5"}'
 ```
 

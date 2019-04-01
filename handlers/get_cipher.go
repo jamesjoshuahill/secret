@@ -21,7 +21,14 @@ type GetCipher struct {
 }
 
 func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	contentType := r.Header.Get("Content-Type")
+
+	if contentType != contentTypeJSON {
+		writeError(w, http.StatusUnsupportedMediaType, "unsupported Content-Type")
+		return
+	}
+
+	w.Header().Set("Content-Type", contentTypeJSON)
 
 	vars := mux.Vars(r)
 	id := vars["id"]

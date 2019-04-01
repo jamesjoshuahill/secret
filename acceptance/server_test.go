@@ -72,6 +72,7 @@ var _ = Describe("Server", func() {
 			}`, key)
 			req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader(reqBody))
 			Expect(err).NotTo(HaveOccurred())
+			req.Header.Set("Content-Type", "application/json")
 
 			res, err := client.Do(req)
 			Expect(err).NotTo(HaveOccurred())
@@ -103,6 +104,7 @@ var _ = Describe("Server", func() {
 	It("rejects a malformed get cipher request", func() {
 		req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader("not json"))
 		Expect(err).NotTo(HaveOccurred())
+		req.Header.Set("Content-Type", "application/json")
 
 		res, err := client.Do(req)
 		Expect(err).NotTo(HaveOccurred())
@@ -122,6 +124,7 @@ var _ = Describe("Server", func() {
 			"key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
+		req.Header.Set("Content-Type", "application/json")
 
 		res, err := client.Do(req)
 		Expect(err).NotTo(HaveOccurred())
