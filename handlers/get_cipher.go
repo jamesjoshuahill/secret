@@ -7,11 +7,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type getCipherResponse struct {
+type GetCipherResponse struct {
 	Data string `json:"data"`
 }
 
-type getCipherRequest struct {
+type GetCipherRequest struct {
 	Key string `json:"key"`
 }
 
@@ -33,7 +33,7 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	body := &getCipherRequest{}
+	body := &GetCipherRequest{}
 	err := json.NewDecoder(r.Body).Decode(body)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "decoding request body")
@@ -52,7 +52,7 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cipherRes := &getCipherResponse{
+	cipherRes := &GetCipherResponse{
 		Data: plainText,
 	}
 
