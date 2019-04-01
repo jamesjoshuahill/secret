@@ -49,9 +49,24 @@ go run cmd/server/main.go \
   --key acceptance/fixtures/key.pem
 ```
 
-## Create a cipher
+## API
 
-**POST /v1/ciphers**
+This micro service provides two endpoints that accept and provide JSON.
+
+_Clients are responsible for storing the id and AES key in order to get the cipher later._
+
+### Create a cipher
+
+#### Request
+
+Endpoint: `POST /v1/ciphers`
+
+Body:
+
+| Attribute | Type   | Description               |
+|:----------|:-------|:--------------------------|
+| id        | string | identifier for the cipher |
+| data      | string | plain text to encrypt     |
 
 Example request:
 ```bash
@@ -62,18 +77,34 @@ curl \
   -d '{"id":"some-id","data":"some plain text"}'
 ```
 
-Example response:
+#### Response
+
+Status code: `200 OK`
+
+Body:
+
+| Attribute | Type   | Description                                      |
+|:----------|:-------|:-------------------------------------------------|
+| key       | string | hexadecimal encoded AES key used to encrypt data |
+
+Example response body:
 ```json
 {
   "key":"1bc50ee2992feba6c1d9e384b3c8e9203dcfc0eed50c032dfc2821ca2aa0cfa5",
 }
 ```
 
-_The client is responsible for storing the id and key._
+### Get a cipher
 
-## Get a cipher
+#### Request
 
-**GET /v1/ciphers/{id}**
+Endpoint: `GET /v1/ciphers/{id}`
+
+Body:
+
+| Attribute | Type   | Description                                       |
+|:----------|:-------|:--------------------------------------------------|
+| key       | string | hexadecimal encoded AES key to decrypt the cipher |
 
 Example request:
 ```bash
@@ -84,9 +115,36 @@ curl \
   -d '{"key":"1bc50ee2992feba6c1d9e384b3c8e9203dcfc0eed50c032dfc2821ca2aa0cfa5"}'
 ```
 
-Example response:
+### Response
+
+Status code: `200 OK`
+
+Body:
+
+| Attribute | Type   | Description          |
+|:----------|:-------|:---------------------|
+| data      | string | decrypted plain text |
+
+Example response body:
 ```json
 {
   "data": "some plain text"
+}
+```
+
+### Error responses
+
+Status code: `4xx–5xx`
+
+Body:
+
+| Attribute | Type   | Description   |
+|:----------|:-------|:--------------|
+| error     | string | error message |
+
+Example response body:
+```json
+{
+  "error": "wrong key"
 }
 ```
