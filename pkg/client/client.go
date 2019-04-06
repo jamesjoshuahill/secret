@@ -1,4 +1,4 @@
-// Package Client provides a Client for the cipher server.
+// Package client provides a Client for the cipher server.
 package client
 
 import (
