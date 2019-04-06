@@ -1,5 +1,7 @@
 # ciphers
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/jamesjoshuahill/ciphers)](https://goreportcard.com/report/github.com/jamesjoshuahill/ciphers)
+
 A microservice written in Go that creates ciphers using AES encryption.
 
 Ciphers are stored in memory and can be retrieved with the correct key.
