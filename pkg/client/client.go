@@ -9,6 +9,7 @@ import (
 
 const ciphersResourcePath = "/v1/ciphers"
 
+// Client represents an API client that provides store and retreive functions.
 type Client struct {
 	baseURL     string
 	httpsClient HTTPSClient
