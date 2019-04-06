@@ -1,6 +1,9 @@
 package handlers
 
-import "github.com/jamesjoshuahill/ciphers/repository"
+import (
+	"github.com/jamesjoshuahill/ciphers/encryption"
+	"github.com/jamesjoshuahill/ciphers/repository"
+)
 
 type Repository interface {
 	Store(repository.Cipher) error
@@ -8,9 +11,9 @@ type Repository interface {
 }
 
 type Encrypter interface {
-	Encrypt(string) (string, string, error)
+	Encrypt(string) (encryption.Cipher, error)
 }
 
 type Decrypter interface {
-	Decrypt(string, string) (string, error)
+	Decrypt(cipher encryption.Cipher) (string, error)
 }

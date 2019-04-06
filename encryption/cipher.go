@@ -1,7 +1,7 @@
-package repository
+package encryption
 
 type Cipher struct {
-	ID         string
+	Key        string
 	Nonce      string
 	CipherText string
 }

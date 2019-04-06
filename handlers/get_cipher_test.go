@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"strings"
 
+	"github.com/jamesjoshuahill/ciphers/encryption"
+
 	"github.com/gorilla/mux"
 
 	"github.com/jamesjoshuahill/ciphers/repository"
@@ -42,10 +44,6 @@ var _ = Describe("GetCipher", func() {
 	})
 
 	It("retrieves the cipher", func() {
-		repo.FindByResourceIDCall.Returns.Cipher = repository.Cipher{
-			ID:         "client-cipher-id",
-			CipherText: "some cipher text",
-		}
 		router.Handle("/v1/ciphers/{id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
@@ -57,6 +55,7 @@ var _ = Describe("GetCipher", func() {
 	It("decrypts the ciphertext", func() {
 		repo.FindByResourceIDCall.Returns.Cipher = repository.Cipher{
 			ID:         "client-cipher-id",
+			Nonce:      "some nonce",
 			CipherText: "some cipher text",
 		}
 		router.Handle("/v1/ciphers/{id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
@@ -64,8 +63,11 @@ var _ = Describe("GetCipher", func() {
 		router.ServeHTTP(res, req)
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
-		Expect(decrypter.DecryptCall.Received.Key).To(Equal("key for client-cipher-id"))
-		Expect(decrypter.DecryptCall.Received.CipherText).To(Equal("some cipher text"))
+		Expect(decrypter.DecryptCall.Received.Cipher).To(Equal(encryption.Cipher{
+			Key:        "key for client-cipher-id",
+			Nonce:      "some nonce",
+			CipherText: "some cipher text",
+		}))
 	})
 
 	It("fails when the request content type is not JSON", func() {

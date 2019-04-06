@@ -12,6 +12,7 @@ var _ = Describe("Repo", func() {
 
 		cipher := repository.Cipher{
 			ID:         "some-id",
+			Nonce:      "some-nonce",
 			CipherText: "some-cipher-text",
 		}
 		err := repo.Store(cipher)
@@ -26,16 +27,10 @@ var _ = Describe("Repo", func() {
 	It("fails when the cipher already exits", func() {
 		repo := repository.New()
 
-		err := repo.Store(repository.Cipher{
-			ID:         "some-id",
-			CipherText: "some-cipher-text",
-		})
+		err := repo.Store(repository.Cipher{ID: "some-id"})
 		Expect(err).NotTo(HaveOccurred())
 
-		err = repo.Store(repository.Cipher{
-			ID:         "some-id",
-			CipherText: "some-cipher-text",
-		})
+		err = repo.Store(repository.Cipher{ID: "some-id"})
 		Expect(err).To(MatchError("already exists"))
 	})
 

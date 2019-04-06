@@ -8,18 +8,18 @@ import (
 
 type Decrypter struct{}
 
-func (Decrypter) Decrypt(key, cipherText string) (string, error) {
-	secretKey, err := hex.DecodeString(key)
+func (Decrypter) Decrypt(c Cipher) (string, error) {
+	secretKey, err := hex.DecodeString(c.Key)
 	if err != nil {
 		return "", err
 	}
 
-	ciphertext, err := hex.DecodeString(cipherText)
+	ciphertext, err := hex.DecodeString(c.CipherText)
 	if err != nil {
 		return "", err
 	}
 
-	iv, err := hex.DecodeString(ivHex)
+	nonce, err := hex.DecodeString(c.Nonce)
 	if err != nil {
 		return "", err
 	}
@@ -34,7 +34,7 @@ func (Decrypter) Decrypt(key, cipherText string) (string, error) {
 		return "", err
 	}
 
-	plainText, err := aesgcm.Open(nil, iv, ciphertext, nil)
+	plainText, err := aesgcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
 		return "", err
 	}

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/jamesjoshuahill/ciphers/encryption"
+
 	"github.com/gorilla/mux"
 )
 
@@ -46,7 +48,11 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plainText, err := g.Decrypter.Decrypt(body.Key, cipher.CipherText)
+	plainText, err := g.Decrypter.Decrypt(encryption.Cipher{
+		Key:        body.Key,
+		Nonce:      cipher.Nonce,
+		CipherText: cipher.CipherText,
+	})
 	if err != nil {
 		writeError(w, http.StatusUnauthorized, "wrong key")
 		return

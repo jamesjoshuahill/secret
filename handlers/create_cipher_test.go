@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"strings"
 
+	"github.com/jamesjoshuahill/ciphers/encryption"
+
 	"github.com/jamesjoshuahill/ciphers/handlers/fakes"
 
 	"github.com/jamesjoshuahill/ciphers/repository"
@@ -39,7 +41,6 @@ var _ = Describe("CreateCipher", func() {
 	})
 
 	It("encrypts the plain text", func() {
-		encrypter.EncryptCall.Returns.Key = "key for client-cipher-id"
 		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
 
 		handler.ServeHTTP(res, req)
@@ -79,8 +80,11 @@ var _ = Describe("CreateCipher", func() {
 	})
 
 	It("stores the cipher", func() {
-		encrypter.EncryptCall.Returns.Key = "key for client-cipher-id"
-		encrypter.EncryptCall.Returns.CipherText = "some cipher text"
+		encrypter.EncryptCall.Returns.Cipher = encryption.Cipher{
+			Key:        "key for client-cipher-id",
+			Nonce:      "some nonce",
+			CipherText: "some cipher text",
+		}
 		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
 
 		handler.ServeHTTP(res, req)
@@ -88,12 +92,12 @@ var _ = Describe("CreateCipher", func() {
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
 		Expect(repo.StoreCall.Received.Cipher).To(Equal(repository.Cipher{
 			ID:         "client-cipher-id",
+			Nonce:      "some nonce",
 			CipherText: "some cipher text",
 		}))
 	})
 
 	It("fails when the cipher already exists", func() {
-		encrypter.EncryptCall.Returns.Key = "key for client-cipher-id"
 		repo.StoreCall.Returns.Error = errors.New("fake error")
 		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
 
