@@ -7,11 +7,11 @@ import (
 	"net/http/httptest"
 	"strings"
 
+	"github.com/jamesjoshuahill/ciphers/repository"
+
 	"github.com/jamesjoshuahill/ciphers/encryption"
 
 	"github.com/gorilla/mux"
-
-	"github.com/jamesjoshuahill/ciphers/repository"
 
 	"github.com/jamesjoshuahill/ciphers/handlers/fakes"
 	. "github.com/onsi/ginkgo"

@@ -1,14 +1,15 @@
-package repository_test
+package inmemory_test
 
 import (
 	"github.com/jamesjoshuahill/ciphers/repository"
+	"github.com/jamesjoshuahill/ciphers/repository/inmemory"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Repo", func() {
 	It("stores and retrieves ciphers", func() {
-		repo := repository.New()
+		repo := inmemory.New()
 
 		cipher := repository.Cipher{
 			ID:         "some-id",
@@ -25,7 +26,7 @@ var _ = Describe("Repo", func() {
 	})
 
 	It("fails when the cipher already exits", func() {
-		repo := repository.New()
+		repo := inmemory.New()
 
 		err := repo.Store(repository.Cipher{ID: "some-id"})
 		Expect(err).NotTo(HaveOccurred())
@@ -35,7 +36,7 @@ var _ = Describe("Repo", func() {
 	})
 
 	It("fails when it cannot find a cipher", func() {
-		repo := repository.New()
+		repo := inmemory.New()
 
 		_, err := repo.FindByID("some-id")
 		Expect(err).To(MatchError("not found"))

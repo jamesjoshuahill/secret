@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/jamesjoshuahill/ciphers/encryption"
+	"github.com/jamesjoshuahill/ciphers/repository/inmemory"
 
-	"github.com/jamesjoshuahill/ciphers/repository"
+	"github.com/jamesjoshuahill/ciphers/encryption"
 
 	"github.com/jamesjoshuahill/ciphers/handlers"
 
@@ -34,7 +34,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	repo := repository.New()
+	repo := inmemory.New()
 	encrypter := encryption.Encrypter{}
 	decrypter := encryption.Decrypter{}
 	createCipherHandler := &handlers.CreateCipher{Repository: repo, Encrypter: encrypter}

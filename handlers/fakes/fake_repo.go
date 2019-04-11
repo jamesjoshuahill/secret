@@ -1,6 +1,8 @@
 package fakes
 
-import "github.com/jamesjoshuahill/ciphers/repository"
+import (
+	"github.com/jamesjoshuahill/ciphers/repository"
+)
 
 type FakeRepo struct {
 	StoreCall struct {

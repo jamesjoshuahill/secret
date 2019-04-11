@@ -1,4 +1,4 @@
-package repository_test
+package inmemory_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestRepository(t *testing.T) {
+func TestInMemory(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Repository Suite")
+	RunSpecs(t, "In Memory Suite")
 }
