@@ -1,0 +1,12 @@
+language: go
+
+go:
+- "1.12"
+
+env:
+- GO111MODULE=on
+
+install:
+- go get github.com/onsi/ginkgo/ginkgo
+
+script: ginkgo -r -randomizeSuites -randomizeAllSpecs -keepGoing -race -cover -trace
