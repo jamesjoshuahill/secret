@@ -2,9 +2,9 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/jamesjoshuahill/ciphers)](https://goreportcard.com/report/github.com/jamesjoshuahill/ciphers)
 
-A microservice written in Go that creates ciphers using AES encryption.
+A microservice written in Go that stores secrets using AES encryption.
 
-Ciphers are stored in memory and can be retrieved with the correct key.
+Ciphertext is stored in memory and can be retrieved with the correct AES key.
 
 ## Get
 
@@ -40,7 +40,7 @@ go test ./...
 
 ## Run
 
-_The server requires TLS configuration_
+_The server requires TLS configuration._
 
 For example, use the self-signed certificate and private key used by the test suite:
 
