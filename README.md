@@ -1,6 +1,6 @@
 # ciphers
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/jamesjoshuahill/ciphers)](https://goreportcard.com/report/github.com/jamesjoshuahill/ciphers)
+[![Build Status](https://travis-ci.org/jamesjoshuahill/ciphers.svg?branch=master)](https://travis-ci.org/jamesjoshuahill/ciphers) [![Go Report Card](https://goreportcard.com/badge/github.com/jamesjoshuahill/ciphers)](https://goreportcard.com/report/github.com/jamesjoshuahill/ciphers)
 
 A microservice written in Go that stores secrets using AES encryption.
 
