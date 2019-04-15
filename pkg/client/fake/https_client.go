@@ -1,8 +1,8 @@
-package fakes
+package fake
 
 import "net/http"
 
-type FakeHTTPSClient struct {
+type HTTPSClient struct {
 	DoCall struct {
 		Received struct {
 			Request *http.Request
@@ -14,7 +14,7 @@ type FakeHTTPSClient struct {
 	}
 }
 
-func (f *FakeHTTPSClient) Do(req *http.Request) (*http.Response, error) {
+func (f *HTTPSClient) Do(req *http.Request) (*http.Response, error) {
 	f.DoCall.Received.Request = req
 	return f.DoCall.Returns.Response, f.DoCall.Returns.Error
 }
