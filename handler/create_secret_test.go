@@ -7,13 +7,11 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"github.com/jamesjoshuahill/ciphers/repository/inmemory"
-
 	"github.com/jamesjoshuahill/ciphers/aes"
-
-	"github.com/jamesjoshuahill/ciphers/handler/fake"
-
 	"github.com/jamesjoshuahill/ciphers/handler"
+	"github.com/jamesjoshuahill/ciphers/handler/fake"
+	"github.com/jamesjoshuahill/ciphers/inmemory"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

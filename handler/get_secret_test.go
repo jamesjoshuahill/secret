@@ -7,17 +7,15 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"github.com/jamesjoshuahill/ciphers/repository/inmemory"
-
 	"github.com/jamesjoshuahill/ciphers/aes"
+	"github.com/jamesjoshuahill/ciphers/handler"
+	"github.com/jamesjoshuahill/ciphers/handler/fake"
+	"github.com/jamesjoshuahill/ciphers/inmemory"
 
 	"github.com/gorilla/mux"
 
-	"github.com/jamesjoshuahill/ciphers/handler/fake"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-
-	"github.com/jamesjoshuahill/ciphers/handler"
 )
 
 var _ = Describe("GetSecret", func() {

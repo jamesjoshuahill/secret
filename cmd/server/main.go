@@ -9,7 +9,7 @@ import (
 
 	"github.com/jamesjoshuahill/ciphers/aes"
 	"github.com/jamesjoshuahill/ciphers/handler"
-	"github.com/jamesjoshuahill/ciphers/repository/inmemory"
+	"github.com/jamesjoshuahill/ciphers/inmemory"
 
 	"github.com/gorilla/mux"
 	"github.com/jessevdk/go-flags"
