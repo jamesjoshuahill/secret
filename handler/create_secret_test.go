@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"github.com/jamesjoshuahill/ciphers/repository"
+	"github.com/jamesjoshuahill/ciphers/repository/inmemory"
 
 	"github.com/jamesjoshuahill/ciphers/aes"
 
@@ -90,7 +90,7 @@ var _ = Describe("CreateSecret", func() {
 		handler.ServeHTTP(res, req)
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
-		Expect(repo.StoreCall.Received.Secret).To(Equal(repository.Secret{
+		Expect(repo.StoreCall.Received.Secret).To(Equal(inmemory.Secret{
 			ID:         "client-secret-id",
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",

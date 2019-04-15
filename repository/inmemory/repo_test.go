@@ -3,7 +3,6 @@ package inmemory_test
 import (
 	"sync"
 
-	"github.com/jamesjoshuahill/ciphers/repository"
 	"github.com/jamesjoshuahill/ciphers/repository/inmemory"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -13,7 +12,7 @@ var _ = Describe("Repo", func() {
 	It("stores and retrieves secrets", func() {
 		repo := inmemory.NewRepo()
 
-		secret := repository.Secret{
+		secret := inmemory.Secret{
 			ID:         "some-id",
 			Nonce:      "some-nonce",
 			CipherText: "some-cipher-text",
@@ -30,7 +29,7 @@ var _ = Describe("Repo", func() {
 	It("handles concurrent stores", func() {
 		repo := inmemory.NewRepo()
 
-		secret := repository.Secret{
+		secret := inmemory.Secret{
 			ID:         "some-id",
 			Nonce:      "some-nonce",
 			CipherText: "some-cipher-text",
@@ -65,7 +64,7 @@ var _ = Describe("Repo", func() {
 	It("handles concurrent finds", func() {
 		repo := inmemory.NewRepo()
 
-		secret := repository.Secret{
+		secret := inmemory.Secret{
 			ID:         "some-id",
 			Nonce:      "some-nonce",
 			CipherText: "some-cipher-text",
@@ -77,10 +76,10 @@ var _ = Describe("Repo", func() {
 		wg := sync.WaitGroup{}
 		wg.Add(3)
 
-		var secret1, secret2 repository.Secret
+		var secret1, secret2 inmemory.Secret
 		var storeErr, err1, err2 error
 		go func() {
-			storeErr = repo.Store(repository.Secret{ID: "another-id"})
+			storeErr = repo.Store(inmemory.Secret{ID: "another-id"})
 			wg.Done()
 		}()
 		go func() {
@@ -99,7 +98,7 @@ var _ = Describe("Repo", func() {
 			BeNil(),
 			BeNil(),
 		))
-		Expect([]repository.Secret{secret1, secret2}).To(ConsistOf(
+		Expect([]inmemory.Secret{secret1, secret2}).To(ConsistOf(
 			secret,
 			secret,
 		))
@@ -108,10 +107,10 @@ var _ = Describe("Repo", func() {
 	It("fails when the secret already exits", func() {
 		repo := inmemory.NewRepo()
 
-		err := repo.Store(repository.Secret{ID: "some-id"})
+		err := repo.Store(inmemory.Secret{ID: "some-id"})
 		Expect(err).NotTo(HaveOccurred())
 
-		err = repo.Store(repository.Secret{ID: "some-id"})
+		err = repo.Store(inmemory.Secret{ID: "some-id"})
 		Expect(err).To(MatchError("already exists"))
 	})
 

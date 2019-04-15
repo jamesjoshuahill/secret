@@ -1,4 +1,4 @@
-package repository
+package inmemory
 
 type Secret struct {
 	ID         string

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/jamesjoshuahill/ciphers/repository"
+	"github.com/jamesjoshuahill/ciphers/repository/inmemory"
 )
 
 const contentTypeJSON = "application/json"
@@ -46,7 +46,7 @@ func (c *CreateSecret) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = c.Repository.Store(repository.Secret{
+	err = c.Repository.Store(inmemory.Secret{
 		ID:         reqBody.ID,
 		Nonce:      secret.Nonce,
 		CipherText: secret.CipherText,

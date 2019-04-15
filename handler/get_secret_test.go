@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"github.com/jamesjoshuahill/ciphers/repository"
+	"github.com/jamesjoshuahill/ciphers/repository/inmemory"
 
 	"github.com/jamesjoshuahill/ciphers/aes"
 
@@ -53,7 +53,7 @@ var _ = Describe("GetSecret", func() {
 	})
 
 	It("decrypts the ciphertext", func() {
-		repo.FindByResourceIDCall.Returns.Secret = repository.Secret{
+		repo.FindByResourceIDCall.Returns.Secret = inmemory.Secret{
 			ID:         "client-secret-id",
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",
