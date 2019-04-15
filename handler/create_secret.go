@@ -9,21 +9,21 @@ import (
 
 const contentTypeJSON = "application/json"
 
-type CreateCipherRequest struct {
+type CreateSecretRequest struct {
 	Data string `json:"data"`
 	ID   string `json:"id"`
 }
 
-type CreateCipherResponse struct {
+type CreateSecretResponse struct {
 	Key string `json:"key"`
 }
 
-type CreateCipher struct {
+type CreateSecret struct {
 	Repository Repository
 	Encrypter  Encrypter
 }
 
-func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (c *CreateSecret) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-Type")
 
 	if contentType != contentTypeJSON {
@@ -33,7 +33,7 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", contentTypeJSON)
 
-	reqBody := &CreateCipherRequest{}
+	reqBody := &CreateSecretRequest{}
 	err := json.NewDecoder(r.Body).Decode(reqBody)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "decoding request body")
@@ -52,11 +52,11 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		CipherText: secret.CipherText,
 	})
 	if err != nil {
-		writeError(w, http.StatusConflict, "cipher already exists")
+		writeError(w, http.StatusConflict, "secret already exists")
 		return
 	}
 
-	cipherRes := CreateCipherResponse{
+	cipherRes := CreateSecretResponse{
 		Key: secret.Key,
 	}
 

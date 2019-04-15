@@ -48,29 +48,29 @@ var _ = Describe("Server", func() {
 		))
 	})
 
-	It("creates and stores ciphers", func() {
+	It("creates and stores secrets", func() {
 		var key string
-		By("accepting a valid create cipher request", func() {
+		By("accepting a valid create secret request", func() {
 			res, err := httpsClient.Post(serverUrl("v1/ciphers"), "application/json", strings.NewReader(`{
-				"id": "client-cipher-id",
+				"id": "client-secret-id",
 				"data": "some plain text"
 			}`))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(res.StatusCode).To(Equal(http.StatusOK))
 			Expect(res.Header.Get("Content-Type")).To(Equal("application/json"))
 
-			var body createCipherResponseBody
+			var body createSecretResponseBody
 			err = json.NewDecoder(res.Body).Decode(&body)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(body.Key).NotTo(BeEmpty())
 			key = body.Key
 		})
 
-		By("accepting a valid get cipher request", func() {
+		By("accepting a valid get secret request", func() {
 			reqBody := fmt.Sprintf(`{
 				"key": "%s"
 			}`, key)
-			req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-cipher-id"), strings.NewReader(reqBody))
+			req, err := http.NewRequest("GET", serverUrl("v1/ciphers/client-secret-id"), strings.NewReader(reqBody))
 			Expect(err).NotTo(HaveOccurred())
 			req.Header.Set("Content-Type", "application/json")
 
@@ -88,6 +88,6 @@ var _ = Describe("Server", func() {
 	})
 })
 
-type createCipherResponseBody struct {
+type createSecretResponseBody struct {
 	Key string `json:"key"`
 }

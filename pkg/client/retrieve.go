@@ -11,7 +11,7 @@ import (
 // Retrieve sends an HTTP request to get the cipher using and id and aesKey,
 // and returns the decrypted plain text.
 func (c *Client) Retrieve(id, aesKey []byte) ([]byte, error) {
-	reqBody := handler.GetCipherRequest{
+	reqBody := handler.GetSecretRequest{
 		Key: string(aesKey),
 	}
 
@@ -23,7 +23,7 @@ func (c *Client) Retrieve(id, aesKey []byte) ([]byte, error) {
 
 	switch res.StatusCode {
 	case http.StatusOK:
-		var body handler.GetCipherResponse
+		var body handler.GetSecretResponse
 		err = json.NewDecoder(res.Body).Decode(&body)
 		if err != nil {
 			return nil, fmt.Errorf("decoding get cipher response body: %s", err)

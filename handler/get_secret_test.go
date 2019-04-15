@@ -20,7 +20,7 @@ import (
 	"github.com/jamesjoshuahill/ciphers/handler"
 )
 
-var _ = Describe("GetCipher", func() {
+var _ = Describe("GetSecret", func() {
 	var (
 		repo      *fake.FakeRepo
 		decrypter *fake.FakeDecrypter
@@ -36,35 +36,35 @@ var _ = Describe("GetCipher", func() {
 		router = mux.NewRouter()
 
 		var err error
-		req, err = http.NewRequest("GET", "/v1/ciphers/client-cipher-id", strings.NewReader(`{
-			"key": "key for client-cipher-id"
+		req, err = http.NewRequest("GET", "/v1/ciphers/client-secret-id", strings.NewReader(`{
+			"key": "key for client-secret-id"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
 		req.Header.Set("Content-Type", "application/json")
 	})
 
-	It("retrieves the cipher", func() {
-		router.Handle("/v1/ciphers/{id}", &handler.GetCipher{Repository: repo, Decrypter: decrypter})
+	It("retrieves the secret", func() {
+		router.Handle("/v1/ciphers/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
-		Expect(repo.FindByResourceIDCall.Received.ID).To(Equal("client-cipher-id"))
+		Expect(repo.FindByResourceIDCall.Received.ID).To(Equal("client-secret-id"))
 	})
 
 	It("decrypts the ciphertext", func() {
 		repo.FindByResourceIDCall.Returns.Secret = repository.Secret{
-			ID:         "client-cipher-id",
+			ID:         "client-secret-id",
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",
 		}
-		router.Handle("/v1/ciphers/{id}", &handler.GetCipher{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/ciphers/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
 		Expect(decrypter.DecryptCall.Received.Secret).To(Equal(encryption.Secret{
-			Key:        "key for client-cipher-id",
+			Key:        "key for client-secret-id",
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",
 		}))
@@ -72,7 +72,7 @@ var _ = Describe("GetCipher", func() {
 
 	It("fails when the request content type is not JSON", func() {
 		req.Header.Set("Content-Type", "text/plain")
-		handler := handler.GetCipher{Repository: repo, Decrypter: decrypter}
+		handler := handler.GetSecret{Repository: repo, Decrypter: decrypter}
 
 		handler.ServeHTTP(res, req)
 
@@ -82,7 +82,7 @@ var _ = Describe("GetCipher", func() {
 
 	It("fails when the request body cannot be parsed", func() {
 		req.Body = ioutil.NopCloser(strings.NewReader("not json"))
-		router.Handle("/v1/ciphers/{id}", &handler.GetCipher{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/ciphers/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
@@ -90,9 +90,9 @@ var _ = Describe("GetCipher", func() {
 		Expect(res.Body.String()).To(ContainSubstring("decoding request body"))
 	})
 
-	It("fails when the cipher is not found", func() {
+	It("fails when the secret is not found", func() {
 		repo.FindByResourceIDCall.Returns.Error = errors.New("fake error")
-		router.Handle("/v1/ciphers/{id}", &handler.GetCipher{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/ciphers/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
@@ -100,9 +100,9 @@ var _ = Describe("GetCipher", func() {
 		Expect(res.Body.String()).To(ContainSubstring("not found"))
 	})
 
-	It("fails when the cipher cannot be decrypted", func() {
+	It("fails when the secret cannot be decrypted", func() {
 		decrypter.DecryptCall.Returns.Error = errors.New("fake error")
-		handler := handler.GetCipher{Repository: repo, Decrypter: decrypter}
+		handler := handler.GetSecret{Repository: repo, Decrypter: decrypter}
 
 		handler.ServeHTTP(res, req)
 

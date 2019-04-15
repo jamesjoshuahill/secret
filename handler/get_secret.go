@@ -9,20 +9,20 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type GetCipherResponse struct {
+type GetSecretResponse struct {
 	Data string `json:"data"`
 }
 
-type GetCipherRequest struct {
+type GetSecretRequest struct {
 	Key string `json:"key"`
 }
 
-type GetCipher struct {
+type GetSecret struct {
 	Repository Repository
 	Decrypter  Decrypter
 }
 
-func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (g *GetSecret) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-Type")
 
 	if contentType != contentTypeJSON {
@@ -35,7 +35,7 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	body := &GetCipherRequest{}
+	body := &GetSecretRequest{}
 	err := json.NewDecoder(r.Body).Decode(body)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "decoding request body")
@@ -58,11 +58,11 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cipherRes := &GetCipherResponse{
+	secretRes := &GetSecretResponse{
 		Data: plainText,
 	}
 
-	resBody, err := json.Marshal(cipherRes)
+	resBody, err := json.Marshal(secretRes)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "encoding response body")
 		return
