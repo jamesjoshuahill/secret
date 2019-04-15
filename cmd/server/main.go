@@ -7,15 +7,12 @@ import (
 	"os"
 	"time"
 
+	"github.com/jamesjoshuahill/ciphers/encryption"
+	"github.com/jamesjoshuahill/ciphers/handler"
 	"github.com/jamesjoshuahill/ciphers/repository/inmemory"
 
-	"github.com/jamesjoshuahill/ciphers/encryption"
-
-	"github.com/jamesjoshuahill/ciphers/handler"
-
-	"github.com/jessevdk/go-flags"
-
 	"github.com/gorilla/mux"
+	"github.com/jessevdk/go-flags"
 )
 
 type options struct {
