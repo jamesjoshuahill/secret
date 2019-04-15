@@ -53,8 +53,8 @@ func startServer(pathToServerBinary string) *gexec.Session {
 	cmd := exec.Command(
 		pathToServerBinary,
 		fmt.Sprintf("--port=%d", serverPort),
-		fmt.Sprintf("--cert=fixtures/cert.pem"),
-		fmt.Sprintf("--key=fixtures/key.pem"),
+		fmt.Sprintf("--cert=testdata/cert.pem"),
+		fmt.Sprintf("--key=testdata/key.pem"),
 	)
 
 	session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
@@ -79,7 +79,7 @@ func serverBaseURL() string {
 func newClient() *http.Client {
 	certPool := x509.NewCertPool()
 
-	rootCA, err := ioutil.ReadFile("fixtures/cert.pem")
+	rootCA, err := ioutil.ReadFile("testdata/cert.pem")
 	Expect(err).NotTo(HaveOccurred())
 
 	ok := certPool.AppendCertsFromPEM(rootCA)

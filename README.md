@@ -35,7 +35,7 @@ ginkgo -r -race
 or:
 
 ```bash
-go test ./...
+go test -race ./...
 ```
 
 ## Run
@@ -47,26 +47,26 @@ For example, use the self-signed certificate and private key used by the test su
 ```bash
 go run cmd/server/main.go \
   --port 8080 \
-  --cert acceptance/fixtures/cert.pem \
-  --key acceptance/fixtures/key.pem
+  --cert acceptance_test/testdata/cert.pem \
+  --key acceptance_test/testdata/key.pem
 ```
 
 Then, create a cipher:
 
 ```bash
 curl \
-  --cacert acceptance/fixtures/cert.pem \
+  --cacert acceptance_test/testdata/cert.pem \
   https://127.0.0.1:8080/v1/ciphers \
   -X POST \
   -H 'Content-Type: application/json' \
   -d '{"id":"some-id","data":"some plain text"}'
 ```
 
-and retrieve it:
+and retrieve it using the AES key:
 
 ```bash
 curl \
-  --cacert acceptance/fixtures/cert.pem \
+  --cacert acceptance_test/testdata/cert.pem \
   https://127.0.0.1:8080/v1/ciphers/some-id \
   -X GET \
   -H 'Content-Type: application/json' \
