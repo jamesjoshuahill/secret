@@ -7,7 +7,7 @@ import (
 type FakeRepo struct {
 	StoreCall struct {
 		Received struct {
-			Cipher repository.Cipher
+			Secret repository.Secret
 		}
 		Returns struct {
 			Error error
@@ -18,18 +18,18 @@ type FakeRepo struct {
 			ID string
 		}
 		Returns struct {
-			Cipher repository.Cipher
+			Secret repository.Secret
 			Error  error
 		}
 	}
 }
 
-func (r *FakeRepo) Store(cipher repository.Cipher) error {
-	r.StoreCall.Received.Cipher = cipher
+func (r *FakeRepo) Store(cipher repository.Secret) error {
+	r.StoreCall.Received.Secret = cipher
 	return r.StoreCall.Returns.Error
 }
 
-func (r *FakeRepo) FindByID(id string) (repository.Cipher, error) {
+func (r *FakeRepo) FindByID(id string) (repository.Secret, error) {
 	r.FindByResourceIDCall.Received.ID = id
-	return r.FindByResourceIDCall.Returns.Cipher, r.FindByResourceIDCall.Returns.Error
+	return r.FindByResourceIDCall.Returns.Secret, r.FindByResourceIDCall.Returns.Error
 }

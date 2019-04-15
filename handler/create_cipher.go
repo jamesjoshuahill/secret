@@ -40,16 +40,16 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cipher, err := c.Encrypter.Encrypt(reqBody.Data)
+	secret, err := c.Encrypter.Encrypt(reqBody.Data)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "encrypting data")
 		return
 	}
 
-	err = c.Repository.Store(repository.Cipher{
+	err = c.Repository.Store(repository.Secret{
 		ID:         reqBody.ID,
-		Nonce:      cipher.Nonce,
-		CipherText: cipher.CipherText,
+		Nonce:      secret.Nonce,
+		CipherText: secret.CipherText,
 	})
 	if err != nil {
 		writeError(w, http.StatusConflict, "cipher already exists")
@@ -57,7 +57,7 @@ func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cipherRes := CreateCipherResponse{
-		Key: cipher.Key,
+		Key: secret.Key,
 	}
 
 	resBody, err := json.Marshal(cipherRes)

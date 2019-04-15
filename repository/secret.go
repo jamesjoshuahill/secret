@@ -1,6 +1,6 @@
 package repository
 
-type Cipher struct {
+type Secret struct {
 	ID         string
 	Nonce      string
 	CipherText string

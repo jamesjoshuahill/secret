@@ -8,38 +8,38 @@ import (
 )
 
 type repo struct {
-	ciphers map[string]repository.Cipher
 	mutex   *sync.RWMutex
+	secrets map[string]repository.Secret
 }
 
 func New() *repo {
 	return &repo{
-		ciphers: make(map[string]repository.Cipher),
 		mutex:   &sync.RWMutex{},
+		secrets: make(map[string]repository.Secret),
 	}
 }
 
-func (r *repo) Store(cipher repository.Cipher) error {
+func (r *repo) Store(secret repository.Secret) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
-	if _, ok := r.ciphers[cipher.ID]; ok {
+	if _, ok := r.secrets[secret.ID]; ok {
 		return errors.New("already exists")
 	}
 
-	r.ciphers[cipher.ID] = cipher
+	r.secrets[secret.ID] = secret
 
 	return nil
 }
 
-func (r *repo) FindByID(id string) (repository.Cipher, error) {
+func (r *repo) FindByID(id string) (repository.Secret, error) {
 	r.mutex.RLock()
 	defer r.mutex.RUnlock()
 
-	cipher, ok := r.ciphers[id]
+	secret, ok := r.secrets[id]
 	if !ok {
-		return repository.Cipher{}, errors.New("not found")
+		return repository.Secret{}, errors.New("not found")
 	}
 
-	return cipher, nil
+	return secret, nil
 }

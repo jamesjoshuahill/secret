@@ -42,7 +42,7 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cipher, err := g.Repository.FindByID(id)
+	secret, err := g.Repository.FindByID(id)
 	if err != nil {
 		writeError(w, http.StatusNotFound, "not found")
 		return
@@ -50,8 +50,8 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	plainText, err := g.Decrypter.Decrypt(encryption.Secret{
 		Key:        body.Key,
-		Nonce:      cipher.Nonce,
-		CipherText: cipher.CipherText,
+		Nonce:      secret.Nonce,
+		CipherText: secret.CipherText,
 	})
 	if err != nil {
 		writeError(w, http.StatusUnauthorized, "wrong key")

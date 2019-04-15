@@ -90,7 +90,7 @@ var _ = Describe("CreateCipher", func() {
 		handler.ServeHTTP(res, req)
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
-		Expect(repo.StoreCall.Received.Cipher).To(Equal(repository.Cipher{
+		Expect(repo.StoreCall.Received.Secret).To(Equal(repository.Secret{
 			ID:         "client-cipher-id",
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",

@@ -10,27 +10,27 @@ import (
 )
 
 var _ = Describe("Repo", func() {
-	It("stores and retrieves ciphers", func() {
+	It("stores and retrieves secrets", func() {
 		repo := inmemory.New()
 
-		cipher := repository.Cipher{
+		secret := repository.Secret{
 			ID:         "some-id",
 			Nonce:      "some-nonce",
 			CipherText: "some-cipher-text",
 		}
-		err := repo.Store(cipher)
+		err := repo.Store(secret)
 		Expect(err).NotTo(HaveOccurred())
 
-		actualCipher, err := repo.FindByID("some-id")
+		actualSecret, err := repo.FindByID("some-id")
 		Expect(err).NotTo(HaveOccurred())
 
-		Expect(actualCipher).To(Equal(cipher))
+		Expect(actualSecret).To(Equal(secret))
 	})
 
-	It("does not store a cipher more than once", func() {
+	It("handles concurrent stores", func() {
 		repo := inmemory.New()
 
-		cipher := repository.Cipher{
+		secret := repository.Secret{
 			ID:         "some-id",
 			Nonce:      "some-nonce",
 			CipherText: "some-cipher-text",
@@ -41,15 +41,15 @@ var _ = Describe("Repo", func() {
 
 		var err1, err2, err3 error
 		go func() {
-			err1 = repo.Store(cipher)
+			err1 = repo.Store(secret)
 			wg.Done()
 		}()
 		go func() {
-			err2 = repo.Store(cipher)
+			err2 = repo.Store(secret)
 			wg.Done()
 		}()
 		go func() {
-			err3 = repo.Store(cipher)
+			err3 = repo.Store(secret)
 			wg.Done()
 		}()
 
@@ -62,33 +62,33 @@ var _ = Describe("Repo", func() {
 		))
 	})
 
-	It("does not read ciphers during writes", func() {
+	It("handles concurrent finds", func() {
 		repo := inmemory.New()
 
-		cipher := repository.Cipher{
+		secret := repository.Secret{
 			ID:         "some-id",
 			Nonce:      "some-nonce",
 			CipherText: "some-cipher-text",
 		}
 
-		err := repo.Store(cipher)
+		err := repo.Store(secret)
 		Expect(err).NotTo(HaveOccurred())
 
 		wg := sync.WaitGroup{}
 		wg.Add(3)
 
-		var cipher1, cipher2 repository.Cipher
+		var secret1, secret2 repository.Secret
 		var storeErr, err1, err2 error
 		go func() {
-			storeErr = repo.Store(repository.Cipher{ID: "another-id"})
+			storeErr = repo.Store(repository.Secret{ID: "another-id"})
 			wg.Done()
 		}()
 		go func() {
-			cipher1, err1 = repo.FindByID("some-id")
+			secret1, err1 = repo.FindByID("some-id")
 			wg.Done()
 		}()
 		go func() {
-			cipher2, err2 = repo.FindByID("some-id")
+			secret2, err2 = repo.FindByID("some-id")
 			wg.Done()
 		}()
 
@@ -99,23 +99,23 @@ var _ = Describe("Repo", func() {
 			BeNil(),
 			BeNil(),
 		))
-		Expect([]repository.Cipher{cipher1, cipher2}).To(ConsistOf(
-			cipher,
-			cipher,
+		Expect([]repository.Secret{secret1, secret2}).To(ConsistOf(
+			secret,
+			secret,
 		))
 	})
 
-	It("fails when the cipher already exits", func() {
+	It("fails when the secret already exits", func() {
 		repo := inmemory.New()
 
-		err := repo.Store(repository.Cipher{ID: "some-id"})
+		err := repo.Store(repository.Secret{ID: "some-id"})
 		Expect(err).NotTo(HaveOccurred())
 
-		err = repo.Store(repository.Cipher{ID: "some-id"})
+		err = repo.Store(repository.Secret{ID: "some-id"})
 		Expect(err).To(MatchError("already exists"))
 	})
 
-	It("fails when it cannot find a cipher", func() {
+	It("fails when it cannot find a secret", func() {
 		repo := inmemory.New()
 
 		_, err := repo.FindByID("some-id")

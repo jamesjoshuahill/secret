@@ -53,7 +53,7 @@ var _ = Describe("GetCipher", func() {
 	})
 
 	It("decrypts the ciphertext", func() {
-		repo.FindByResourceIDCall.Returns.Cipher = repository.Cipher{
+		repo.FindByResourceIDCall.Returns.Secret = repository.Secret{
 			ID:         "client-cipher-id",
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",

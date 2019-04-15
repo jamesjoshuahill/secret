@@ -6,8 +6,8 @@ import (
 )
 
 type Repository interface {
-	Store(repository.Cipher) error
-	FindByID(string) (repository.Cipher, error)
+	Store(repository.Secret) error
+	FindByID(string) (repository.Secret, error)
 }
 
 type Encrypter interface {
