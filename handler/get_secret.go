@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/jamesjoshuahill/ciphers/encryption"
+	"github.com/jamesjoshuahill/ciphers/aes"
 
 	"github.com/gorilla/mux"
 )
@@ -48,7 +48,7 @@ func (g *GetSecret) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plainText, err := g.Decrypter.Decrypt(encryption.Secret{
+	plainText, err := g.Decrypter.Decrypt(aes.Secret{
 		Key:        body.Key,
 		Nonce:      secret.Nonce,
 		CipherText: secret.CipherText,

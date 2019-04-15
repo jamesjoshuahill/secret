@@ -1,20 +1,20 @@
 package fake
 
-import "github.com/jamesjoshuahill/ciphers/encryption"
+import "github.com/jamesjoshuahill/ciphers/aes"
 
-type FakeEncrypter struct {
+type Encrypter struct {
 	EncryptCall struct {
 		Received struct {
 			PlainText string
 		}
 		Returns struct {
-			Secret encryption.Secret
+			Secret aes.Secret
 			Error  error
 		}
 	}
 }
 
-func (e *FakeEncrypter) Encrypt(plainText string) (encryption.Secret, error) {
+func (e *Encrypter) Encrypt(plainText string) (aes.Secret, error) {
 	e.EncryptCall.Received.PlainText = plainText
 	return e.EncryptCall.Returns.Secret, e.EncryptCall.Returns.Error
 }

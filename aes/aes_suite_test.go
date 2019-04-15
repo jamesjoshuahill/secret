@@ -1,4 +1,4 @@
-package encryption_test
+package aes_test
 
 import (
 	"testing"
@@ -9,5 +9,5 @@ import (
 
 func TestEncryption(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Encryption Suite")
+	RunSpecs(t, "AES Suite")
 }

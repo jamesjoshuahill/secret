@@ -1,4 +1,4 @@
-package encryption_test
+package aes_test
 
 import (
 	"encoding/hex"
@@ -6,12 +6,12 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/jamesjoshuahill/ciphers/encryption"
+	"github.com/jamesjoshuahill/ciphers/aes"
 )
 
 var _ = Describe("Encrypter", func() {
 	It("encrypts plain text", func() {
-		encrypter := encryption.Encrypter{}
+		encrypter := aes.Encrypter{}
 
 		secret, err := encrypter.Encrypt("some plain text")
 		Expect(err).NotTo(HaveOccurred())
@@ -20,7 +20,7 @@ var _ = Describe("Encrypter", func() {
 	})
 
 	It("creates a new key and nonce for each secret", func() {
-		encrypter := encryption.Encrypter{}
+		encrypter := aes.Encrypter{}
 
 		secret1, err := encrypter.Encrypt("some plain text")
 		Expect(err).NotTo(HaveOccurred())

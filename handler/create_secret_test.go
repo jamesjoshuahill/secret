@@ -9,7 +9,7 @@ import (
 
 	"github.com/jamesjoshuahill/ciphers/repository"
 
-	"github.com/jamesjoshuahill/ciphers/encryption"
+	"github.com/jamesjoshuahill/ciphers/aes"
 
 	"github.com/jamesjoshuahill/ciphers/handler/fake"
 
@@ -20,15 +20,15 @@ import (
 
 var _ = Describe("CreateSecret", func() {
 	var (
-		repo      *fake.FakeRepo
-		encrypter *fake.FakeEncrypter
+		repo      *fake.Repo
+		encrypter *fake.Encrypter
 		res       *httptest.ResponseRecorder
 		req       *http.Request
 	)
 
 	BeforeEach(func() {
-		repo = new(fake.FakeRepo)
-		encrypter = new(fake.FakeEncrypter)
+		repo = new(fake.Repo)
+		encrypter = new(fake.Encrypter)
 		res = httptest.NewRecorder()
 
 		var err error
@@ -80,7 +80,7 @@ var _ = Describe("CreateSecret", func() {
 	})
 
 	It("stores the secret", func() {
-		encrypter.EncryptCall.Returns.Secret = encryption.Secret{
+		encrypter.EncryptCall.Returns.Secret = aes.Secret{
 			Key:        "key for client-secret-id",
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",

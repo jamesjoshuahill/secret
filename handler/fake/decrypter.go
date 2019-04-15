@@ -1,11 +1,11 @@
 package fake
 
-import "github.com/jamesjoshuahill/ciphers/encryption"
+import "github.com/jamesjoshuahill/ciphers/aes"
 
-type FakeDecrypter struct {
+type Decrypter struct {
 	DecryptCall struct {
 		Received struct {
-			Secret encryption.Secret
+			Secret aes.Secret
 		}
 		Returns struct {
 			PlainText string
@@ -14,7 +14,7 @@ type FakeDecrypter struct {
 	}
 }
 
-func (d *FakeDecrypter) Decrypt(secret encryption.Secret) (string, error) {
+func (d *Decrypter) Decrypt(secret aes.Secret) (string, error) {
 	d.DecryptCall.Received.Secret = secret
 	return d.DecryptCall.Returns.PlainText, d.DecryptCall.Returns.Error
 }

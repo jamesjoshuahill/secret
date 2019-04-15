@@ -9,7 +9,7 @@ import (
 
 	"github.com/jamesjoshuahill/ciphers/repository"
 
-	"github.com/jamesjoshuahill/ciphers/encryption"
+	"github.com/jamesjoshuahill/ciphers/aes"
 
 	"github.com/gorilla/mux"
 
@@ -22,16 +22,16 @@ import (
 
 var _ = Describe("GetSecret", func() {
 	var (
-		repo      *fake.FakeRepo
-		decrypter *fake.FakeDecrypter
+		repo      *fake.Repo
+		decrypter *fake.Decrypter
 		res       *httptest.ResponseRecorder
 		req       *http.Request
 		router    *mux.Router
 	)
 
 	BeforeEach(func() {
-		repo = new(fake.FakeRepo)
-		decrypter = new(fake.FakeDecrypter)
+		repo = new(fake.Repo)
+		decrypter = new(fake.Decrypter)
 		res = httptest.NewRecorder()
 		router = mux.NewRouter()
 
@@ -63,7 +63,7 @@ var _ = Describe("GetSecret", func() {
 		router.ServeHTTP(res, req)
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
-		Expect(decrypter.DecryptCall.Received.Secret).To(Equal(encryption.Secret{
+		Expect(decrypter.DecryptCall.Received.Secret).To(Equal(aes.Secret{
 			Key:        "key for client-secret-id",
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",
