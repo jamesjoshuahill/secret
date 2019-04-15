@@ -32,7 +32,7 @@ var _ = Describe("CreateSecret", func() {
 		res = httptest.NewRecorder()
 
 		var err error
-		req, err = http.NewRequest("POST", "/v1/ciphers", strings.NewReader(`{
+		req, err = http.NewRequest("POST", "/v1/secrets", strings.NewReader(`{
 			"id": "client-secret-id",
 			"data": "some plain text"
 		}`))

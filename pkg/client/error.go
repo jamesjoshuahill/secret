@@ -41,7 +41,7 @@ func (e unexpectedError) Message() string {
 type alreadyExistsError struct{}
 
 func (e alreadyExistsError) Error() string {
-	return fmt.Sprintf("cipher already exists")
+	return fmt.Sprintf("secret already exists")
 }
 
 func (e alreadyExistsError) AlreadyExists() bool {
@@ -51,7 +51,7 @@ func (e alreadyExistsError) AlreadyExists() bool {
 type notFoundError struct{}
 
 func (e notFoundError) Error() string {
-	return fmt.Sprintf("cipher not found")
+	return fmt.Sprintf("secret not found")
 }
 
 func (e notFoundError) NotFound() bool {
@@ -61,7 +61,7 @@ func (e notFoundError) NotFound() bool {
 type wrongKeyError struct{}
 
 func (e wrongKeyError) Error() string {
-	return fmt.Sprintf("wrong key for cipher")
+	return fmt.Sprintf("wrong key for secret")
 }
 
 func (e wrongKeyError) WrongKey() bool {

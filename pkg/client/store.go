@@ -8,7 +8,7 @@ import (
 	"github.com/jamesjoshuahill/ciphers/handler"
 )
 
-// Store sends an HTTP request to create a cipher of the payload with an id,
+// Store sends an HTTP request to create a secret of the payload with an id,
 // and returns the aesKey.
 func (c *Client) Store(id, payload []byte) ([]byte, error) {
 	reqBody := handler.CreateSecretRequest{
@@ -16,9 +16,9 @@ func (c *Client) Store(id, payload []byte) ([]byte, error) {
 		Data: string(payload),
 	}
 
-	res, err := c.do("POST", c.baseURL+ciphersResourcePath, reqBody)
+	res, err := c.do("POST", c.baseURL+secretsResourcePath, reqBody)
 	if err != nil {
-		return nil, fmt.Errorf("create cipher request: %s", err)
+		return nil, fmt.Errorf("create secret request: %s", err)
 	}
 
 	switch res.StatusCode {
@@ -26,7 +26,7 @@ func (c *Client) Store(id, payload []byte) ([]byte, error) {
 		var body handler.CreateSecretResponse
 		err = json.NewDecoder(res.Body).Decode(&body)
 		if err != nil {
-			return nil, fmt.Errorf("decoding create cipher response body: %s", err)
+			return nil, fmt.Errorf("decoding create secret response body: %s", err)
 		}
 
 		return []byte(body.Key), nil

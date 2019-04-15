@@ -7,10 +7,10 @@ import (
 )
 
 var _ = Describe("Client", func() {
-	It("stores and retrieves ciphers", func() {
+	It("stores and retrieves secrets", func() {
 		c := client.New(serverBaseURL(), httpsClient)
 
-		By("storing a cipher")
+		By("storing a secret")
 		id := []byte("my-id")
 		payload := []byte("my-payload")
 		key, err := c.Store(id, payload)
@@ -18,7 +18,7 @@ var _ = Describe("Client", func() {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(key).NotTo(BeEmpty())
 
-		By("retrieving a cipher")
+		By("retrieving a secret")
 		actualPayload, err := c.Retrieve(id, key)
 
 		Expect(err).NotTo(HaveOccurred())

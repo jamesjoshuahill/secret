@@ -14,7 +14,7 @@ type FakeDecrypter struct {
 	}
 }
 
-func (d *FakeDecrypter) Decrypt(cipher encryption.Secret) (string, error) {
-	d.DecryptCall.Received.Secret = cipher
+func (d *FakeDecrypter) Decrypt(secret encryption.Secret) (string, error) {
+	d.DecryptCall.Received.Secret = secret
 	return d.DecryptCall.Returns.PlainText, d.DecryptCall.Returns.Error
 }

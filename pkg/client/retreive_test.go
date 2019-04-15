@@ -10,7 +10,7 @@ import (
 )
 
 var _ = Describe("Retrieve", func() {
-	It("makes valid get cipher requests", func() {
+	It("makes valid get secret requests", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusOK,
 			Body:       readCloser(`{"data":"some-payload"}`),
@@ -25,8 +25,8 @@ var _ = Describe("Retrieve", func() {
 		body, err := ioutil.ReadAll(req.Body)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(body).To(MatchJSON(`{
-				"key": "some-key"
-			}`))
+			"key": "some-key"
+		}`))
 		Expect(actualPayload).To(Equal([]byte("some-payload")))
 	})
 
@@ -36,7 +36,7 @@ var _ = Describe("Retrieve", func() {
 		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
 
 		Expect(err).To(MatchError(SatisfyAll(
-			ContainSubstring("get cipher request"),
+			ContainSubstring("get secret request"),
 			ContainSubstring("fake error"),
 		)))
 	})
@@ -68,7 +68,7 @@ var _ = Describe("Retrieve", func() {
 		Expect(unerr.StatusCode()).To(Equal(http.StatusInternalServerError))
 	})
 
-	It("fails when the cipher cannot be found", func() {
+	It("fails when the secret cannot be found", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusNotFound,
 			Body:       readCloser(`{"error":"not found"}`),
@@ -103,7 +103,7 @@ var _ = Describe("Retrieve", func() {
 		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
 
 		Expect(err).To(MatchError(
-			ContainSubstring("decoding get cipher response body"),
+			ContainSubstring("decoding get secret response body"),
 		))
 	})
 })

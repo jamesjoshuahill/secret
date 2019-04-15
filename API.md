@@ -2,13 +2,13 @@
 
 This micro service provides two endpoints that accept and provide JSON.
 
-_Clients are responsible for storing the id and AES key in order to get the cipher later._
+_Clients are responsible for storing the id and AES key in order to get the secret later._
 
-### Create a cipher
+### Create a secret
 
 #### Request
 
-Endpoint: `POST /v1/ciphers`
+Route: `POST /v1/secrets`
 
 Headers:
 
@@ -18,14 +18,14 @@ Body:
 
 | Attribute | Type   | Description               |
 |:----------|:-------|:--------------------------|
-| id        | string | identifier for the cipher |
+| id        | string | identifier for the secret |
 | data      | string | plain text to encrypt     |
 
 Example request:
 ```bash
 curl \
-  --cacert acceptance/fixtures/cert.pem \
-  https://127.0.0.1:8080/v1/ciphers \
+  --cacert acceptance_test/testdata/cert.pem \
+  https://127.0.0.1:8080/v1/secrets \
   -X POST \
   -H 'Content-Type: application/json' \
   -d '{"id":"some-id","data":"some plain text"}'
@@ -52,11 +52,11 @@ Example response body:
 }
 ```
 
-### Get a cipher
+### Get a secret
 
 #### Request
 
-Endpoint: `GET /v1/ciphers/{id}`
+Route: `GET /v1/secrets/{id}`
 
 Headers:
 
@@ -66,13 +66,13 @@ Body:
 
 | Attribute | Type   | Description                                       |
 |:----------|:-------|:--------------------------------------------------|
-| key       | string | hexadecimal encoded AES key to decrypt the cipher |
+| key       | string | hexadecimal encoded AES key to decrypt the secret |
 
 Example request:
 ```bash
 curl \
-  --cacert acceptance/fixtures/cert.pem \
-  https://127.0.0.1:8080/v1/ciphers/some-id \
+  --cacert acceptance_test/testdata/cert.pem \
+  https://127.0.0.1:8080/v1/secrets/some-id \
   -X GET \
   -H 'Content-Type: application/json' \
   -d '{"key":"1bc50ee2992feba6c1d9e384b3c8e9203dcfc0eed50c032dfc2821ca2aa0cfa5"}'

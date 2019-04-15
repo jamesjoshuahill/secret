@@ -36,7 +36,7 @@ var _ = Describe("GetSecret", func() {
 		router = mux.NewRouter()
 
 		var err error
-		req, err = http.NewRequest("GET", "/v1/ciphers/client-secret-id", strings.NewReader(`{
+		req, err = http.NewRequest("GET", "/v1/secrets/client-secret-id", strings.NewReader(`{
 			"key": "key for client-secret-id"
 		}`))
 		Expect(err).NotTo(HaveOccurred())
@@ -44,7 +44,7 @@ var _ = Describe("GetSecret", func() {
 	})
 
 	It("retrieves the secret", func() {
-		router.Handle("/v1/ciphers/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/secrets/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
@@ -58,7 +58,7 @@ var _ = Describe("GetSecret", func() {
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",
 		}
-		router.Handle("/v1/ciphers/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/secrets/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
@@ -82,7 +82,7 @@ var _ = Describe("GetSecret", func() {
 
 	It("fails when the request body cannot be parsed", func() {
 		req.Body = ioutil.NopCloser(strings.NewReader("not json"))
-		router.Handle("/v1/ciphers/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/secrets/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
@@ -92,7 +92,7 @@ var _ = Describe("GetSecret", func() {
 
 	It("fails when the secret is not found", func() {
 		repo.FindByResourceIDCall.Returns.Error = errors.New("fake error")
-		router.Handle("/v1/ciphers/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/secrets/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 

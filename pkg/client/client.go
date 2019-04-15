@@ -1,4 +1,4 @@
-// Package client provides a Client for the cipher server.
+// Package client provides a Client for the secrets server.
 package client
 
 import (
@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-const ciphersResourcePath = "/v1/ciphers"
+const secretsResourcePath = "/v1/secrets"
 
 // Client represents an API client that provides store and retreive functions.
 type Client struct {

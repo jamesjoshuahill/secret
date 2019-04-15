@@ -10,7 +10,7 @@ import (
 )
 
 var _ = Describe("Store", func() {
-	It("makes valid create cipher requests", func() {
+	It("makes valid create secret requests", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusOK,
 			Body:       readCloser(`{"key":"some-key"}`),
@@ -37,7 +37,7 @@ var _ = Describe("Store", func() {
 		_, err := c.Store([]byte("some-id"), []byte("some-payload"))
 
 		Expect(err).To(MatchError(SatisfyAll(
-			ContainSubstring("create cipher request"),
+			ContainSubstring("create secret request"),
 			ContainSubstring("fake error"),
 		)))
 	})
@@ -69,10 +69,10 @@ var _ = Describe("Store", func() {
 		Expect(unerr.StatusCode()).To(Equal(http.StatusInternalServerError))
 	})
 
-	It("fails when the cipher already exists", func() {
+	It("fails when the secret already exists", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusConflict,
-			Body:       readCloser(`{"error":"cipher already exists"}`),
+			Body:       readCloser(`{"error":"secret already exists"}`),
 		}
 
 		_, err := c.Store([]byte("some-id"), []byte("some-payload"))
@@ -91,7 +91,7 @@ var _ = Describe("Store", func() {
 		_, err := c.Store([]byte("some-id"), []byte("some-payload"))
 
 		Expect(err).To(MatchError(
-			ContainSubstring("decoding create cipher response body"),
+			ContainSubstring("decoding create secret response body"),
 		))
 	})
 })

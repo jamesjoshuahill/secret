@@ -24,8 +24,8 @@ type FakeRepo struct {
 	}
 }
 
-func (r *FakeRepo) Store(cipher repository.Secret) error {
-	r.StoreCall.Received.Secret = cipher
+func (r *FakeRepo) Store(secret repository.Secret) error {
+	r.StoreCall.Received.Secret = secret
 	return r.StoreCall.Returns.Error
 }
 

@@ -8,17 +8,17 @@ import (
 	"github.com/jamesjoshuahill/ciphers/handler"
 )
 
-// Retrieve sends an HTTP request to get the cipher using and id and aesKey,
+// Retrieve sends an HTTP request to get the secret using and id and aesKey,
 // and returns the decrypted plain text.
 func (c *Client) Retrieve(id, aesKey []byte) ([]byte, error) {
 	reqBody := handler.GetSecretRequest{
 		Key: string(aesKey),
 	}
 
-	url := fmt.Sprintf("%s%s/%s", c.baseURL, ciphersResourcePath, string(id))
+	url := fmt.Sprintf("%s%s/%s", c.baseURL, secretsResourcePath, string(id))
 	res, err := c.do("GET", url, reqBody)
 	if err != nil {
-		return nil, fmt.Errorf("get cipher request: %s", err)
+		return nil, fmt.Errorf("get secret request: %s", err)
 	}
 
 	switch res.StatusCode {
@@ -26,7 +26,7 @@ func (c *Client) Retrieve(id, aesKey []byte) ([]byte, error) {
 		var body handler.GetSecretResponse
 		err = json.NewDecoder(res.Body).Decode(&body)
 		if err != nil {
-			return nil, fmt.Errorf("decoding get cipher response body: %s", err)
+			return nil, fmt.Errorf("decoding get secret response body: %s", err)
 		}
 
 		return []byte(body.Data), nil

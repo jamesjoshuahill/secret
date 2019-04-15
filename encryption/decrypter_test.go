@@ -7,7 +7,7 @@ import (
 )
 
 var _ = Describe("Decrypter", func() {
-	It("decrypts cipher text", func() {
+	It("decrypts secret", func() {
 		decrypter := encryption.Decrypter{}
 
 		plainText, err := decrypter.Decrypt(encryption.Secret{

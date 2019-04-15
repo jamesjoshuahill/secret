@@ -56,11 +56,11 @@ func (c *CreateSecret) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cipherRes := CreateSecretResponse{
+	secretRes := CreateSecretResponse{
 		Key: secret.Key,
 	}
 
-	resBody, err := json.Marshal(cipherRes)
+	resBody, err := json.Marshal(secretRes)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "encoding response body")
 		return
