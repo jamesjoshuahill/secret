@@ -48,7 +48,7 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plainText, err := g.Decrypter.Decrypt(encryption.Cipher{
+	plainText, err := g.Decrypter.Decrypt(encryption.Secret{
 		Key:        body.Key,
 		Nonce:      cipher.Nonce,
 		CipherText: cipher.CipherText,

@@ -11,9 +11,9 @@ type Repository interface {
 }
 
 type Encrypter interface {
-	Encrypt(string) (encryption.Cipher, error)
+	Encrypt(string) (encryption.Secret, error)
 }
 
 type Decrypter interface {
-	Decrypt(cipher encryption.Cipher) (string, error)
+	Decrypt(secret encryption.Secret) (string, error)
 }

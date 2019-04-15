@@ -80,7 +80,7 @@ var _ = Describe("CreateCipher", func() {
 	})
 
 	It("stores the cipher", func() {
-		encrypter.EncryptCall.Returns.Cipher = encryption.Cipher{
+		encrypter.EncryptCall.Returns.Secret = encryption.Secret{
 			Key:        "key for client-cipher-id",
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",

@@ -8,13 +8,13 @@ type FakeEncrypter struct {
 			PlainText string
 		}
 		Returns struct {
-			Cipher encryption.Cipher
+			Secret encryption.Secret
 			Error  error
 		}
 	}
 }
 
-func (e *FakeEncrypter) Encrypt(plainText string) (encryption.Cipher, error) {
+func (e *FakeEncrypter) Encrypt(plainText string) (encryption.Secret, error) {
 	e.EncryptCall.Received.PlainText = plainText
-	return e.EncryptCall.Returns.Cipher, e.EncryptCall.Returns.Error
+	return e.EncryptCall.Returns.Secret, e.EncryptCall.Returns.Error
 }

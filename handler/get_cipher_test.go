@@ -63,7 +63,7 @@ var _ = Describe("GetCipher", func() {
 		router.ServeHTTP(res, req)
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
-		Expect(decrypter.DecryptCall.Received.Cipher).To(Equal(encryption.Cipher{
+		Expect(decrypter.DecryptCall.Received.Secret).To(Equal(encryption.Secret{
 			Key:        "key for client-cipher-id",
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",

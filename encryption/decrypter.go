@@ -8,18 +8,18 @@ import (
 
 type Decrypter struct{}
 
-func (Decrypter) Decrypt(c Cipher) (string, error) {
-	secretKey, err := hex.DecodeString(c.Key)
+func (Decrypter) Decrypt(s Secret) (string, error) {
+	secretKey, err := hex.DecodeString(s.Key)
 	if err != nil {
 		return "", err
 	}
 
-	ciphertext, err := hex.DecodeString(c.CipherText)
+	ciphertext, err := hex.DecodeString(s.CipherText)
 	if err != nil {
 		return "", err
 	}
 
-	nonce, err := hex.DecodeString(c.Nonce)
+	nonce, err := hex.DecodeString(s.Nonce)
 	if err != nil {
 		return "", err
 	}

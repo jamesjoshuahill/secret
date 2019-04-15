@@ -1,6 +1,6 @@
 package encryption
 
-type Cipher struct {
+type Secret struct {
 	Key        string
 	Nonce      string
 	CipherText string
