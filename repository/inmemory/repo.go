@@ -12,7 +12,7 @@ type repo struct {
 	secrets map[string]repository.Secret
 }
 
-func New() *repo {
+func NewRepo() *repo {
 	return &repo{
 		mutex:   &sync.RWMutex{},
 		secrets: make(map[string]repository.Secret),

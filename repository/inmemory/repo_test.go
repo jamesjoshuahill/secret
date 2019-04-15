@@ -11,7 +11,7 @@ import (
 
 var _ = Describe("Repo", func() {
 	It("stores and retrieves secrets", func() {
-		repo := inmemory.New()
+		repo := inmemory.NewRepo()
 
 		secret := repository.Secret{
 			ID:         "some-id",
@@ -28,7 +28,7 @@ var _ = Describe("Repo", func() {
 	})
 
 	It("handles concurrent stores", func() {
-		repo := inmemory.New()
+		repo := inmemory.NewRepo()
 
 		secret := repository.Secret{
 			ID:         "some-id",
@@ -63,7 +63,7 @@ var _ = Describe("Repo", func() {
 	})
 
 	It("handles concurrent finds", func() {
-		repo := inmemory.New()
+		repo := inmemory.NewRepo()
 
 		secret := repository.Secret{
 			ID:         "some-id",
@@ -106,7 +106,7 @@ var _ = Describe("Repo", func() {
 	})
 
 	It("fails when the secret already exits", func() {
-		repo := inmemory.New()
+		repo := inmemory.NewRepo()
 
 		err := repo.Store(repository.Secret{ID: "some-id"})
 		Expect(err).NotTo(HaveOccurred())
@@ -116,7 +116,7 @@ var _ = Describe("Repo", func() {
 	})
 
 	It("fails when it cannot find a secret", func() {
-		repo := inmemory.New()
+		repo := inmemory.NewRepo()
 
 		_, err := repo.FindByID("some-id")
 		Expect(err).To(MatchError("not found"))

@@ -31,7 +31,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	repo := inmemory.New()
+	repo := inmemory.NewRepo()
 	encrypter := aes.Encrypter{}
 	decrypter := aes.Decrypter{}
 	createSecretHandler := &handler.CreateSecret{Repository: repo, Encrypter: encrypter}
