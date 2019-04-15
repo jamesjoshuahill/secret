@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jamesjoshuahill/ciphers/handlers"
+	"github.com/jamesjoshuahill/ciphers/handler"
 )
 
 type unexpectedError struct {
@@ -16,7 +16,7 @@ type unexpectedError struct {
 func newUnexpectedError(res *http.Response) unexpectedError {
 	unerr := unexpectedError{statusCode: res.StatusCode}
 
-	var body handlers.ErrorResponse
+	var body handler.ErrorResponse
 	err := json.NewDecoder(res.Body).Decode(&body)
 	if err != nil {
 		return unerr

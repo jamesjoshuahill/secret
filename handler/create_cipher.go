@@ -1,28 +1,29 @@
-package handlers
+package handler
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/jamesjoshuahill/ciphers/encryption"
-
-	"github.com/gorilla/mux"
+	"github.com/jamesjoshuahill/ciphers/repository"
 )
 
-type GetCipherResponse struct {
+const contentTypeJSON = "application/json"
+
+type CreateCipherRequest struct {
 	Data string `json:"data"`
+	ID   string `json:"id"`
 }
 
-type GetCipherRequest struct {
+type CreateCipherResponse struct {
 	Key string `json:"key"`
 }
 
-type GetCipher struct {
+type CreateCipher struct {
 	Repository Repository
-	Decrypter  Decrypter
+	Encrypter  Encrypter
 }
 
-func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (c *CreateCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-Type")
 
 	if contentType != contentTypeJSON {
@@ -32,34 +33,31 @@ func (g *GetCipher) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", contentTypeJSON)
 
-	vars := mux.Vars(r)
-	id := vars["id"]
-
-	body := &GetCipherRequest{}
-	err := json.NewDecoder(r.Body).Decode(body)
+	reqBody := &CreateCipherRequest{}
+	err := json.NewDecoder(r.Body).Decode(reqBody)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "decoding request body")
 		return
 	}
 
-	cipher, err := g.Repository.FindByID(id)
+	cipher, err := c.Encrypter.Encrypt(reqBody.Data)
 	if err != nil {
-		writeError(w, http.StatusNotFound, "not found")
+		writeError(w, http.StatusInternalServerError, "encrypting data")
 		return
 	}
 
-	plainText, err := g.Decrypter.Decrypt(encryption.Cipher{
-		Key:        body.Key,
+	err = c.Repository.Store(repository.Cipher{
+		ID:         reqBody.ID,
 		Nonce:      cipher.Nonce,
 		CipherText: cipher.CipherText,
 	})
 	if err != nil {
-		writeError(w, http.StatusUnauthorized, "wrong key")
+		writeError(w, http.StatusConflict, "cipher already exists")
 		return
 	}
 
-	cipherRes := &GetCipherResponse{
-		Data: plainText,
+	cipherRes := CreateCipherResponse{
+		Key: cipher.Key,
 	}
 
 	resBody, err := json.Marshal(cipherRes)

@@ -1,4 +1,4 @@
-package handlers_test
+package handler_test
 
 import (
 	"errors"
@@ -13,25 +13,25 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/jamesjoshuahill/ciphers/handlers/fakes"
+	"github.com/jamesjoshuahill/ciphers/handler/fake"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/jamesjoshuahill/ciphers/handlers"
+	"github.com/jamesjoshuahill/ciphers/handler"
 )
 
 var _ = Describe("GetCipher", func() {
 	var (
-		repo      *fakes.FakeRepo
-		decrypter *fakes.FakeDecrypter
+		repo      *fake.FakeRepo
+		decrypter *fake.FakeDecrypter
 		res       *httptest.ResponseRecorder
 		req       *http.Request
 		router    *mux.Router
 	)
 
 	BeforeEach(func() {
-		repo = new(fakes.FakeRepo)
-		decrypter = new(fakes.FakeDecrypter)
+		repo = new(fake.FakeRepo)
+		decrypter = new(fake.FakeDecrypter)
 		res = httptest.NewRecorder()
 		router = mux.NewRouter()
 
@@ -44,7 +44,7 @@ var _ = Describe("GetCipher", func() {
 	})
 
 	It("retrieves the cipher", func() {
-		router.Handle("/v1/ciphers/{id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/ciphers/{id}", &handler.GetCipher{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
@@ -58,7 +58,7 @@ var _ = Describe("GetCipher", func() {
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",
 		}
-		router.Handle("/v1/ciphers/{id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/ciphers/{id}", &handler.GetCipher{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
@@ -72,7 +72,7 @@ var _ = Describe("GetCipher", func() {
 
 	It("fails when the request content type is not JSON", func() {
 		req.Header.Set("Content-Type", "text/plain")
-		handler := handlers.GetCipher{Repository: repo, Decrypter: decrypter}
+		handler := handler.GetCipher{Repository: repo, Decrypter: decrypter}
 
 		handler.ServeHTTP(res, req)
 
@@ -82,7 +82,7 @@ var _ = Describe("GetCipher", func() {
 
 	It("fails when the request body cannot be parsed", func() {
 		req.Body = ioutil.NopCloser(strings.NewReader("not json"))
-		router.Handle("/v1/ciphers/{id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/ciphers/{id}", &handler.GetCipher{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
@@ -92,7 +92,7 @@ var _ = Describe("GetCipher", func() {
 
 	It("fails when the cipher is not found", func() {
 		repo.FindByResourceIDCall.Returns.Error = errors.New("fake error")
-		router.Handle("/v1/ciphers/{id}", &handlers.GetCipher{Repository: repo, Decrypter: decrypter})
+		router.Handle("/v1/ciphers/{id}", &handler.GetCipher{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
@@ -102,7 +102,7 @@ var _ = Describe("GetCipher", func() {
 
 	It("fails when the cipher cannot be decrypted", func() {
 		decrypter.DecryptCall.Returns.Error = errors.New("fake error")
-		handler := handlers.GetCipher{Repository: repo, Decrypter: decrypter}
+		handler := handler.GetCipher{Repository: repo, Decrypter: decrypter}
 
 		handler.ServeHTTP(res, req)
 

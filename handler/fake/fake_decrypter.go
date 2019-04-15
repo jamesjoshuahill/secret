@@ -1,4 +1,4 @@
-package fakes
+package fake
 
 import "github.com/jamesjoshuahill/ciphers/encryption"
 

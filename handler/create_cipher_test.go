@@ -1,4 +1,4 @@
-package handlers_test
+package handler_test
 
 import (
 	"errors"
@@ -11,24 +11,24 @@ import (
 
 	"github.com/jamesjoshuahill/ciphers/encryption"
 
-	"github.com/jamesjoshuahill/ciphers/handlers/fakes"
+	"github.com/jamesjoshuahill/ciphers/handler/fake"
 
-	"github.com/jamesjoshuahill/ciphers/handlers"
+	"github.com/jamesjoshuahill/ciphers/handler"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("CreateCipher", func() {
 	var (
-		repo      *fakes.FakeRepo
-		encrypter *fakes.FakeEncrypter
+		repo      *fake.FakeRepo
+		encrypter *fake.FakeEncrypter
 		res       *httptest.ResponseRecorder
 		req       *http.Request
 	)
 
 	BeforeEach(func() {
-		repo = new(fakes.FakeRepo)
-		encrypter = new(fakes.FakeEncrypter)
+		repo = new(fake.FakeRepo)
+		encrypter = new(fake.FakeEncrypter)
 		res = httptest.NewRecorder()
 
 		var err error
@@ -41,7 +41,7 @@ var _ = Describe("CreateCipher", func() {
 	})
 
 	It("encrypts the plain text", func() {
-		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
+		handler := handler.CreateCipher{Repository: repo, Encrypter: encrypter}
 
 		handler.ServeHTTP(res, req)
 
@@ -51,7 +51,7 @@ var _ = Describe("CreateCipher", func() {
 
 	It("fails when the request content type is not JSON", func() {
 		req.Header.Set("Content-Type", "text/plain")
-		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
+		handler := handler.CreateCipher{Repository: repo, Encrypter: encrypter}
 
 		handler.ServeHTTP(res, req)
 
@@ -61,7 +61,7 @@ var _ = Describe("CreateCipher", func() {
 
 	It("fails when the request body cannot be parsed", func() {
 		req.Body = ioutil.NopCloser(strings.NewReader("not json"))
-		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
+		handler := handler.CreateCipher{Repository: repo, Encrypter: encrypter}
 
 		handler.ServeHTTP(res, req)
 
@@ -71,7 +71,7 @@ var _ = Describe("CreateCipher", func() {
 
 	It("fails when the plain text cannot be encrypted", func() {
 		encrypter.EncryptCall.Returns.Error = errors.New("fake error")
-		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
+		handler := handler.CreateCipher{Repository: repo, Encrypter: encrypter}
 
 		handler.ServeHTTP(res, req)
 
@@ -85,7 +85,7 @@ var _ = Describe("CreateCipher", func() {
 			Nonce:      "some nonce",
 			CipherText: "some cipher text",
 		}
-		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
+		handler := handler.CreateCipher{Repository: repo, Encrypter: encrypter}
 
 		handler.ServeHTTP(res, req)
 
@@ -99,7 +99,7 @@ var _ = Describe("CreateCipher", func() {
 
 	It("fails when the cipher already exists", func() {
 		repo.StoreCall.Returns.Error = errors.New("fake error")
-		handler := handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
+		handler := handler.CreateCipher{Repository: repo, Encrypter: encrypter}
 
 		handler.ServeHTTP(res, req)
 

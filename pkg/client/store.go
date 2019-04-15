@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jamesjoshuahill/ciphers/handlers"
+	"github.com/jamesjoshuahill/ciphers/handler"
 )
 
 // Store sends an HTTP request to create a cipher of the payload with an id,
 // and returns the aesKey.
 func (c *Client) Store(id, payload []byte) ([]byte, error) {
-	reqBody := handlers.CreateCipherRequest{
+	reqBody := handler.CreateCipherRequest{
 		ID:   string(id),
 		Data: string(payload),
 	}
@@ -23,7 +23,7 @@ func (c *Client) Store(id, payload []byte) ([]byte, error) {
 
 	switch res.StatusCode {
 	case http.StatusOK:
-		var body handlers.CreateCipherResponse
+		var body handler.CreateCipherResponse
 		err = json.NewDecoder(res.Body).Decode(&body)
 		if err != nil {
 			return nil, fmt.Errorf("decoding create cipher response body: %s", err)

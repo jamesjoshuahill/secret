@@ -11,7 +11,7 @@ import (
 
 	"github.com/jamesjoshuahill/ciphers/encryption"
 
-	"github.com/jamesjoshuahill/ciphers/handlers"
+	"github.com/jamesjoshuahill/ciphers/handler"
 
 	"github.com/jessevdk/go-flags"
 
@@ -37,8 +37,8 @@ func main() {
 	repo := inmemory.New()
 	encrypter := encryption.Encrypter{}
 	decrypter := encryption.Decrypter{}
-	createCipherHandler := &handlers.CreateCipher{Repository: repo, Encrypter: encrypter}
-	getCipherHandler := &handlers.GetCipher{Repository: repo, Decrypter: decrypter}
+	createCipherHandler := &handler.CreateCipher{Repository: repo, Encrypter: encrypter}
+	getCipherHandler := &handler.GetCipher{Repository: repo, Decrypter: decrypter}
 
 	r := mux.NewRouter()
 	r.Handle("/v1/ciphers", createCipherHandler).Methods("POST")
