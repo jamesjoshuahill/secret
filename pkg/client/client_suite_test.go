@@ -32,11 +32,6 @@ type Client interface {
 	Retrieve(id, aesKey []byte) (payload []byte, err error)
 }
 
-type unexpectedError interface {
-	StatusCode() int
-	Message() string
-}
-
 type alreadyExists interface {
 	AlreadyExists() bool
 }

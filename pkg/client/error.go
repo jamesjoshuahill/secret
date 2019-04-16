@@ -11,13 +11,13 @@ import (
 
 var ErrWrongIDOrKey = errors.New("wrong id or key")
 
-type unexpectedError struct {
-	statusCode int
-	message    string
+type UnexpectedError struct {
+	StatusCode int
+	Message    string
 }
 
-func newUnexpectedError(res *http.Response) unexpectedError {
-	unerr := unexpectedError{statusCode: res.StatusCode}
+func newUnexpectedError(res *http.Response) UnexpectedError {
+	unerr := UnexpectedError{StatusCode: res.StatusCode}
 
 	var body handler.ErrorResponse
 	err := json.NewDecoder(res.Body).Decode(&body)
@@ -25,20 +25,12 @@ func newUnexpectedError(res *http.Response) unexpectedError {
 		return unerr
 	}
 
-	unerr.message = body.Message
+	unerr.Message = body.Message
 	return unerr
 }
 
-func (e unexpectedError) Error() string {
-	return fmt.Sprintf("status code: %d, message: %s", e.statusCode, e.message)
-}
-
-func (e unexpectedError) StatusCode() int {
-	return e.statusCode
-}
-
-func (e unexpectedError) Message() string {
-	return e.message
+func (e UnexpectedError) Error() string {
+	return fmt.Sprintf("status code: %d, message: %s", e.StatusCode, e.Message)
 }
 
 type alreadyExistsError struct{}

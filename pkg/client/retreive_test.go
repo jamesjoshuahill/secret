@@ -53,9 +53,10 @@ var _ = Describe("Retrieve", func() {
 		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
 
 		Expect(err).To(HaveOccurred())
-		unerr := err.(unexpectedError)
-		Expect(unerr.StatusCode()).To(Equal(http.StatusInternalServerError))
-		Expect(unerr.Message()).To(Equal("fake error"))
+		unerr := &client.UnexpectedError{}
+		Expect(xerrors.As(err, unerr)).To(BeTrue())
+		Expect(unerr.StatusCode).To(Equal(http.StatusInternalServerError))
+		Expect(unerr.Message).To(Equal("fake error"))
 	})
 
 	It("fails when the response is not unexpected and malformed", func() {
@@ -67,8 +68,9 @@ var _ = Describe("Retrieve", func() {
 		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
 
 		Expect(err).To(HaveOccurred())
-		unerr := err.(unexpectedError)
-		Expect(unerr.StatusCode()).To(Equal(http.StatusInternalServerError))
+		unerr := &client.UnexpectedError{}
+		Expect(xerrors.As(err, unerr)).To(BeTrue())
+		Expect(unerr.StatusCode).To(Equal(http.StatusInternalServerError))
 	})
 
 	It("fails with the wrong secret id or key", func() {

@@ -5,6 +5,10 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"golang.org/x/xerrors"
+
+	"github.com/jamesjoshuahill/ciphers/pkg/client"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -51,9 +55,10 @@ var _ = Describe("Store", func() {
 		_, err := c.Store([]byte("some-id"), []byte("some-payload"))
 
 		Expect(err).To(HaveOccurred())
-		unerr := err.(unexpectedError)
-		Expect(unerr.StatusCode()).To(Equal(http.StatusInternalServerError))
-		Expect(unerr.Message()).To(Equal("fake error"))
+		unerr := &client.UnexpectedError{}
+		Expect(xerrors.As(err, unerr)).To(BeTrue())
+		Expect(unerr.StatusCode).To(Equal(http.StatusInternalServerError))
+		Expect(unerr.Message).To(Equal("fake error"))
 	})
 
 	It("fails when the response is not unexpected and malformed", func() {
@@ -65,8 +70,9 @@ var _ = Describe("Store", func() {
 		_, err := c.Store([]byte("some-id"), []byte("some-payload"))
 
 		Expect(err).To(HaveOccurred())
-		unerr := err.(unexpectedError)
-		Expect(unerr.StatusCode()).To(Equal(http.StatusInternalServerError))
+		unerr := &client.UnexpectedError{}
+		Expect(xerrors.As(err, unerr)).To(BeTrue())
+		Expect(unerr.StatusCode).To(Equal(http.StatusInternalServerError))
 	})
 
 	It("fails when the secret already exists", func() {
