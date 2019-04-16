@@ -26,6 +26,9 @@ var _ = Describe("CreateSecret", func() {
 
 	BeforeEach(func() {
 		repo = new(fake.Repo)
+		encrypt = func(string) (aes.Secret, error) {
+			return aes.Secret{}, nil
+		}
 		res = httptest.NewRecorder()
 
 		var err error

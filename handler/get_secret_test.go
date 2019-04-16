@@ -29,6 +29,9 @@ var _ = Describe("GetSecret", func() {
 
 	BeforeEach(func() {
 		repo = new(fake.Repo)
+		decrypt = func(aes.Secret) (string, error) {
+			return "", nil
+		}
 		res = httptest.NewRecorder()
 		router = mux.NewRouter()
 
