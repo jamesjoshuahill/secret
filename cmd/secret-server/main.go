@@ -36,8 +36,8 @@ func main() {
 	getSecretHandler := &handler.GetSecret{Repository: repo, Decrypt: aes.Decrypt}
 
 	r := mux.NewRouter()
-	r.Methods("POST").Path("/v1/secrets").Handler(createSecretHandler)
-	r.Methods("GET").Path("/v1/secrets/{id}").Handler(getSecretHandler)
+	r.Methods(http.MethodPost).Path("/v1/secrets").Handler(createSecretHandler)
+	r.Methods(http.MethodGet).Path("/v1/secrets/{id}").Handler(getSecretHandler)
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", opts.Port),
