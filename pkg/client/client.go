@@ -15,8 +15,8 @@ type Client struct {
 	httpsClient HTTPSClient
 }
 
-// New returns a Client struct with the given baseURL of the secret-server and HTTPSClient.
-func New(baseURL string, httpsClient HTTPSClient) *Client {
+// NewClient returns a Client struct with the given baseURL of the secret-server and HTTPSClient.
+func NewClient(baseURL string, httpsClient HTTPSClient) *Client {
 	return &Client{
 		baseURL:     baseURL,
 		httpsClient: httpsClient,

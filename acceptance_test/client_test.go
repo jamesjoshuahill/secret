@@ -8,7 +8,7 @@ import (
 
 var _ = Describe("Client", func() {
 	It("stores and retrieves secrets", func() {
-		c := client.New(serverBaseURL(), httpsClient)
+		c := client.NewClient(serverBaseURL(), httpsClient)
 
 		By("storing a secret")
 		id := []byte("my-id")

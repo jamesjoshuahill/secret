@@ -19,5 +19,5 @@ func Example() {
 
 	httpsClient := client.DefaultHTTPSClient(certPool)
 
-	client.New("https://127.0.0.1:8080", httpsClient)
+	client.NewClient("https://127.0.0.1:8080", httpsClient)
 }

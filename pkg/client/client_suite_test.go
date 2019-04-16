@@ -35,7 +35,7 @@ type Client interface {
 func TestClient(t *testing.T) {
 	BeforeEach(func() {
 		httpsClient = new(fake.HTTPSClient)
-		c = client.New(baseURL, httpsClient)
+		c = client.NewClient(baseURL, httpsClient)
 	})
 
 	RegisterFailHandler(Fail)
