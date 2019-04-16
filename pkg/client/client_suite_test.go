@@ -32,10 +32,6 @@ type Client interface {
 	Retrieve(id, aesKey []byte) (payload []byte, err error)
 }
 
-type alreadyExists interface {
-	AlreadyExists() bool
-}
-
 func TestClient(t *testing.T) {
 	BeforeEach(func() {
 		httpsClient = new(fake.HTTPSClient)

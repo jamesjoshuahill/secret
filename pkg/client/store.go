@@ -31,7 +31,7 @@ func (c *Client) Store(id, payload []byte) ([]byte, error) {
 
 		return []byte(body.Key), nil
 	case http.StatusConflict:
-		return nil, alreadyExistsError{}
+		return nil, ErrAlreadyExists
 	default:
 		return nil, newUnexpectedError(res)
 	}

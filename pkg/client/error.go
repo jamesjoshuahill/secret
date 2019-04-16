@@ -9,11 +9,18 @@ import (
 	"github.com/jamesjoshuahill/ciphers/handler"
 )
 
-var ErrWrongIDOrKey = errors.New("wrong id or key")
+var (
+	ErrWrongIDOrKey  = errors.New("wrong id or key")
+	ErrAlreadyExists = errors.New("secret already exists")
+)
 
 type UnexpectedError struct {
 	StatusCode int
 	Message    string
+}
+
+func (e UnexpectedError) Error() string {
+	return fmt.Sprintf("status code: %d, message: %s", e.StatusCode, e.Message)
 }
 
 func newUnexpectedError(res *http.Response) UnexpectedError {
@@ -27,18 +34,4 @@ func newUnexpectedError(res *http.Response) UnexpectedError {
 
 	unerr.Message = body.Message
 	return unerr
-}
-
-func (e UnexpectedError) Error() string {
-	return fmt.Sprintf("status code: %d, message: %s", e.StatusCode, e.Message)
-}
-
-type alreadyExistsError struct{}
-
-func (e alreadyExistsError) Error() string {
-	return fmt.Sprintf("secret already exists")
-}
-
-func (e alreadyExistsError) AlreadyExists() bool {
-	return true
 }

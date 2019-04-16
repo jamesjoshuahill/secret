@@ -84,8 +84,7 @@ var _ = Describe("Store", func() {
 		_, err := c.Store([]byte("some-id"), []byte("some-payload"))
 
 		Expect(err).To(HaveOccurred())
-		unerr := err.(alreadyExists)
-		Expect(unerr.AlreadyExists()).To(BeTrue())
+		Expect(xerrors.Is(err, client.ErrAlreadyExists)).To(BeTrue())
 	})
 
 	It("fails when the response cannot be parsed", func() {
