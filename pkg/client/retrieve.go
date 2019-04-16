@@ -30,10 +30,8 @@ func (c *Client) Retrieve(id, aesKey []byte) ([]byte, error) {
 		}
 
 		return []byte(body.Data), nil
-	case http.StatusUnauthorized:
-		return nil, wrongKeyError{}
-	case http.StatusNotFound:
-		return nil, notFoundError{}
+	case http.StatusUnprocessableEntity:
+		return nil, ErrWrongIDOrKey
 	default:
 		return nil, newUnexpectedError(res)
 	}

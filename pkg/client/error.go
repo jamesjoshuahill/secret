@@ -2,11 +2,14 @@ package client
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/jamesjoshuahill/ciphers/handler"
 )
+
+var ErrWrongIDOrKey = errors.New("wrong id or key")
 
 type unexpectedError struct {
 	statusCode int
@@ -45,25 +48,5 @@ func (e alreadyExistsError) Error() string {
 }
 
 func (e alreadyExistsError) AlreadyExists() bool {
-	return true
-}
-
-type notFoundError struct{}
-
-func (e notFoundError) Error() string {
-	return fmt.Sprintf("secret not found")
-}
-
-func (e notFoundError) NotFound() bool {
-	return true
-}
-
-type wrongKeyError struct{}
-
-func (e wrongKeyError) Error() string {
-	return fmt.Sprintf("wrong key for secret")
-}
-
-func (e wrongKeyError) WrongKey() bool {
 	return true
 }

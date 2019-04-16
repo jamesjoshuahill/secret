@@ -41,14 +41,6 @@ type alreadyExists interface {
 	AlreadyExists() bool
 }
 
-type notFound interface {
-	NotFound() bool
-}
-
-type wrongKey interface {
-	WrongKey() bool
-}
-
 func TestClient(t *testing.T) {
 	BeforeEach(func() {
 		httpsClient = new(fake.HTTPSClient)

@@ -88,23 +88,23 @@ var _ = Describe("GetSecret", func() {
 		Expect(res.Body.String()).To(ContainSubstring("decoding request body"))
 	})
 
-	It("fails when the secret is not found", func() {
+	It("fails when the secret id is wrong", func() {
 		repo.FindByResourceIDCall.Returns.Error = errors.New("fake error")
 		router.Handle("/v1/secrets/{id}", &handler.GetSecret{Repository: repo, Decrypter: decrypter})
 
 		router.ServeHTTP(res, req)
 
-		Expect(res.Code).To(Equal(http.StatusNotFound), res.Body.String())
-		Expect(res.Body.String()).To(ContainSubstring("not found"))
+		Expect(res.Code).To(Equal(http.StatusUnprocessableEntity), res.Body.String())
+		Expect(res.Body.String()).To(ContainSubstring("wrong id or key"))
 	})
 
-	It("fails when the secret cannot be decrypted", func() {
+	It("fails when the secret key is wrong", func() {
 		decrypter.DecryptCall.Returns.Error = errors.New("fake error")
 		handler := handler.GetSecret{Repository: repo, Decrypter: decrypter}
 
 		handler.ServeHTTP(res, req)
 
-		Expect(res.Code).To(Equal(http.StatusUnauthorized))
-		Expect(res.Body.String()).To(ContainSubstring("wrong key"))
+		Expect(res.Code).To(Equal(http.StatusUnprocessableEntity))
+		Expect(res.Body.String()).To(ContainSubstring("wrong id or key"))
 	})
 })

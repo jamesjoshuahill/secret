@@ -44,7 +44,7 @@ func (g *GetSecret) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	secret, err := g.Repository.FindByID(id)
 	if err != nil {
-		writeError(w, http.StatusNotFound, "not found")
+		writeError(w, http.StatusUnprocessableEntity, "wrong id or key")
 		return
 	}
 
@@ -54,7 +54,7 @@ func (g *GetSecret) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		CipherText: secret.CipherText,
 	})
 	if err != nil {
-		writeError(w, http.StatusUnauthorized, "wrong key")
+		writeError(w, http.StatusUnprocessableEntity, "wrong id or key")
 		return
 	}
 

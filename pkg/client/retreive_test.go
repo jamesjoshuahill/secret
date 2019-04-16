@@ -5,6 +5,9 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/jamesjoshuahill/ciphers/pkg/client"
+	"golang.org/x/xerrors"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -68,30 +71,16 @@ var _ = Describe("Retrieve", func() {
 		Expect(unerr.StatusCode()).To(Equal(http.StatusInternalServerError))
 	})
 
-	It("fails when the secret cannot be found", func() {
+	It("fails with the wrong secret id or key", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
-			StatusCode: http.StatusNotFound,
-			Body:       readCloser(`{"error":"not found"}`),
+			StatusCode: http.StatusUnprocessableEntity,
+			Body:       readCloser(`{"error":"wrong id or key"}`),
 		}
 
 		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
 
 		Expect(err).To(HaveOccurred())
-		nferr := err.(notFound)
-		Expect(nferr.NotFound()).To(BeTrue())
-	})
-
-	It("fails when the key is wrong", func() {
-		httpsClient.DoCall.Returns.Response = &http.Response{
-			StatusCode: http.StatusUnauthorized,
-			Body:       readCloser(`{"error":"wrong key"}`),
-		}
-
-		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
-
-		Expect(err).To(HaveOccurred())
-		wkerr := err.(wrongKey)
-		Expect(wkerr.WrongKey()).To(BeTrue())
+		Expect(xerrors.Is(err, client.ErrWrongIDOrKey)).To(BeTrue())
 	})
 
 	It("fails when the response cannot be parsed", func() {
