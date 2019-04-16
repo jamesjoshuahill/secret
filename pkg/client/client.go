@@ -1,4 +1,4 @@
-// Package client provides a Client for the secrets server.
+// Package client provides a Client for secret-server.
 package client
 
 import (
@@ -15,7 +15,7 @@ type Client struct {
 	httpsClient HTTPSClient
 }
 
-// New returns a Client struct with the given baseURL of the server and HTTPSClient.
+// New returns a Client struct with the given baseURL of the secret-server and HTTPSClient.
 func New(baseURL string, httpsClient HTTPSClient) *Client {
 	return &Client{
 		baseURL:     baseURL,

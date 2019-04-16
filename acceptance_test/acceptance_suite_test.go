@@ -29,7 +29,7 @@ func TestAcceptance(t *testing.T) {
 
 	BeforeSuite(func() {
 		var err error
-		pathToServerBinary, err = gexec.Build("github.com/jamesjoshuahill/ciphers/cmd/server")
+		pathToServerBinary, err = gexec.Build("github.com/jamesjoshuahill/ciphers/cmd/secret-server")
 		Expect(err).NotTo(HaveOccurred())
 
 		serverSession = startServer(pathToServerBinary)
