@@ -19,7 +19,7 @@ type GetSecretRequest struct {
 
 type GetSecret struct {
 	Repository Repository
-	Decrypter  Decrypter
+	Decrypt    DecryptFunc
 }
 
 func (g *GetSecret) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +48,7 @@ func (g *GetSecret) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plainText, err := g.Decrypter.Decrypt(aes.Secret{
+	plainText, err := g.Decrypt(aes.Secret{
 		Key:        body.Key,
 		Nonce:      secret.Nonce,
 		CipherText: secret.CipherText,

@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestEncryption(t *testing.T) {
+func TestAES(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "AES Suite")
 }

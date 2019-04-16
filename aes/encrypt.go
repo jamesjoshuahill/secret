@@ -7,9 +7,7 @@ import (
 	"encoding/hex"
 )
 
-type Encrypter struct{}
-
-func (Encrypter) Encrypt(plaintext string) (Secret, error) {
+func Encrypt(plaintext string) (Secret, error) {
 	secretKey := make([]byte, 32)
 	_, err := rand.Read(secretKey)
 	if err != nil {

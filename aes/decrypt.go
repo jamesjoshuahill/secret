@@ -6,9 +6,7 @@ import (
 	"encoding/hex"
 )
 
-type Decrypter struct{}
-
-func (Decrypter) Decrypt(s Secret) (string, error) {
+func Decrypt(s Secret) (string, error) {
 	secretKey, err := hex.DecodeString(s.Key)
 	if err != nil {
 		return "", err

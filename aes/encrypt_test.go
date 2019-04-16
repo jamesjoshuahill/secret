@@ -9,22 +9,18 @@ import (
 	"github.com/jamesjoshuahill/ciphers/aes"
 )
 
-var _ = Describe("Encrypter", func() {
+var _ = Describe("Encrypt", func() {
 	It("encrypts plain text", func() {
-		encrypter := aes.Encrypter{}
-
-		secret, err := encrypter.Encrypt("some plain text")
+		secret, err := aes.Encrypt("some plain text")
 		Expect(err).NotTo(HaveOccurred())
 		Expect(hex.DecodeString(secret.Key)).To(HaveLen(32))
 		Expect(hex.DecodeString(secret.Nonce)).To(HaveLen(12))
 	})
 
 	It("creates a new key and nonce for each secret", func() {
-		encrypter := aes.Encrypter{}
-
-		secret1, err := encrypter.Encrypt("some plain text")
+		secret1, err := aes.Encrypt("some plain text")
 		Expect(err).NotTo(HaveOccurred())
-		secret2, err := encrypter.Encrypt("some plain text")
+		secret2, err := aes.Encrypt("some plain text")
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(secret1.Key).NotTo(Equal(secret2.Key))

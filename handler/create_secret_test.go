@@ -18,15 +18,14 @@ import (
 
 var _ = Describe("CreateSecret", func() {
 	var (
-		repo      *fake.Repo
-		encrypter *fake.Encrypter
-		res       *httptest.ResponseRecorder
-		req       *http.Request
+		repo    *fake.Repo
+		encrypt handler.EncryptFunc
+		res     *httptest.ResponseRecorder
+		req     *http.Request
 	)
 
 	BeforeEach(func() {
 		repo = new(fake.Repo)
-		encrypter = new(fake.Encrypter)
 		res = httptest.NewRecorder()
 
 		var err error
@@ -39,17 +38,22 @@ var _ = Describe("CreateSecret", func() {
 	})
 
 	It("encrypts the plain text", func() {
-		handler := handler.CreateSecret{Repository: repo, Encrypter: encrypter}
+		var plainTextReceived string
+		encrypt = func(plainText string) (aes.Secret, error) {
+			plainTextReceived = plainText
+			return aes.Secret{}, nil
+		}
+		handler := handler.CreateSecret{Repository: repo, Encrypt: encrypt}
 
 		handler.ServeHTTP(res, req)
 
 		Expect(res.Code).To(Equal(http.StatusOK), res.Body.String())
-		Expect(encrypter.EncryptCall.Received.PlainText).To(Equal("some plain text"))
+		Expect(plainTextReceived).To(Equal("some plain text"))
 	})
 
 	It("fails when the request content type is not JSON", func() {
 		req.Header.Set("Content-Type", "text/plain")
-		handler := handler.CreateSecret{Repository: repo, Encrypter: encrypter}
+		handler := handler.CreateSecret{Repository: repo, Encrypt: encrypt}
 
 		handler.ServeHTTP(res, req)
 
@@ -59,7 +63,7 @@ var _ = Describe("CreateSecret", func() {
 
 	It("fails when the request body cannot be parsed", func() {
 		req.Body = ioutil.NopCloser(strings.NewReader("not json"))
-		handler := handler.CreateSecret{Repository: repo, Encrypter: encrypter}
+		handler := handler.CreateSecret{Repository: repo, Encrypt: encrypt}
 
 		handler.ServeHTTP(res, req)
 
@@ -68,8 +72,10 @@ var _ = Describe("CreateSecret", func() {
 	})
 
 	It("fails when the plain text cannot be encrypted", func() {
-		encrypter.EncryptCall.Returns.Error = errors.New("fake error")
-		handler := handler.CreateSecret{Repository: repo, Encrypter: encrypter}
+		encrypt = func(string) (aes.Secret, error) {
+			return aes.Secret{}, errors.New("fake error")
+		}
+		handler := handler.CreateSecret{Repository: repo, Encrypt: encrypt}
 
 		handler.ServeHTTP(res, req)
 
@@ -78,12 +84,14 @@ var _ = Describe("CreateSecret", func() {
 	})
 
 	It("stores the secret", func() {
-		encrypter.EncryptCall.Returns.Secret = aes.Secret{
-			Key:        "key for client-secret-id",
-			Nonce:      "some nonce",
-			CipherText: "some cipher text",
+		encrypt = func(string) (aes.Secret, error) {
+			return aes.Secret{
+				Key:        "key for client-secret-id",
+				Nonce:      "some nonce",
+				CipherText: "some cipher text",
+			}, nil
 		}
-		handler := handler.CreateSecret{Repository: repo, Encrypter: encrypter}
+		handler := handler.CreateSecret{Repository: repo, Encrypt: encrypt}
 
 		handler.ServeHTTP(res, req)
 
@@ -97,7 +105,7 @@ var _ = Describe("CreateSecret", func() {
 
 	It("fails when the secret already exists", func() {
 		repo.StoreCall.Returns.Error = errors.New("fake error")
-		handler := handler.CreateSecret{Repository: repo, Encrypter: encrypter}
+		handler := handler.CreateSecret{Repository: repo, Encrypt: encrypt}
 
 		handler.ServeHTTP(res, req)
 

@@ -20,7 +20,7 @@ type CreateSecretResponse struct {
 
 type CreateSecret struct {
 	Repository Repository
-	Encrypter  Encrypter
+	Encrypt    EncryptFunc
 }
 
 func (c *CreateSecret) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +40,7 @@ func (c *CreateSecret) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	secret, err := c.Encrypter.Encrypt(reqBody.Data)
+	secret, err := c.Encrypt(reqBody.Data)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "encrypting data")
 		return

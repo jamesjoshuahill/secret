@@ -32,10 +32,8 @@ func main() {
 	}
 
 	repo := inmemory.NewRepo()
-	encrypter := aes.Encrypter{}
-	decrypter := aes.Decrypter{}
-	createSecretHandler := &handler.CreateSecret{Repository: repo, Encrypter: encrypter}
-	getSecretHandler := &handler.GetSecret{Repository: repo, Decrypter: decrypter}
+	createSecretHandler := &handler.CreateSecret{Repository: repo, Encrypt: aes.Encrypt}
+	getSecretHandler := &handler.GetSecret{Repository: repo, Decrypt: aes.Decrypt}
 
 	r := mux.NewRouter()
 	r.Methods("POST").Path("/v1/secrets").Handler(createSecretHandler)

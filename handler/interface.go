@@ -10,10 +10,5 @@ type Repository interface {
 	FindByID(string) (inmemory.Secret, error)
 }
 
-type Encrypter interface {
-	Encrypt(string) (aes.Secret, error)
-}
-
-type Decrypter interface {
-	Decrypt(secret aes.Secret) (string, error)
-}
+type EncryptFunc func(string) (aes.Secret, error)
+type DecryptFunc func(secret aes.Secret) (string, error)
