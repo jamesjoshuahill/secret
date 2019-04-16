@@ -17,4 +17,16 @@ var _ = Describe("Decrypt", func() {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(plainText).To(Equal("exampleplaintext"))
 	})
+
+	It("decrypts secrets created by encrypt", func() {
+		plainText := "some plain text"
+
+		secret, err := aes.Encrypt(plainText)
+		Expect(err).NotTo(HaveOccurred())
+
+		decryptedPlainText, err := aes.Decrypt(secret)
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(decryptedPlainText).To(Equal(plainText))
+	})
 })
