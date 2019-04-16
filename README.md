@@ -1,6 +1,6 @@
-# ciphers
+# secret
 
-[![Build Status](https://travis-ci.org/jamesjoshuahill/ciphers.svg?branch=master)](https://travis-ci.org/jamesjoshuahill/ciphers) [![Go Report Card](https://goreportcard.com/badge/github.com/jamesjoshuahill/ciphers)](https://goreportcard.com/report/github.com/jamesjoshuahill/ciphers)
+[![Build Status](https://travis-ci.org/jamesjoshuahill/secret.svg?branch=master)](https://travis-ci.org/jamesjoshuahill/secret) [![Go Report Card](https://goreportcard.com/badge/github.com/jamesjoshuahill/secret)](https://goreportcard.com/report/github.com/jamesjoshuahill/secret)
 
 A microservice written in Go that stores secrets using AES encryption.
 
@@ -13,14 +13,14 @@ _This module requires Go 1.11 or greater._
 Download into GOPATH:
 
 ```bash
-go get github.com/jamesjoshuahill/ciphers
+go get github.com/jamesjoshuahill/secret
 export GO111MODULE=on
 ```
 
 or elsewhere:
 
 ```bash
-git clone https://github.com/jamesjoshuahill/ciphers.git
+git clone https://github.com/jamesjoshuahill/secret.git
 ```
 
 ## Test
