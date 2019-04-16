@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jamesjoshuahill/ciphers/pkg/client"
-	"github.com/jamesjoshuahill/ciphers/pkg/client/fake"
+	"github.com/jamesjoshuahill/secret/pkg/client"
+	"github.com/jamesjoshuahill/secret/pkg/client/fake"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

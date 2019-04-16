@@ -1,7 +1,7 @@
 package acceptance_test
 
 import (
-	"github.com/jamesjoshuahill/ciphers/pkg/client"
+	"github.com/jamesjoshuahill/secret/pkg/client"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

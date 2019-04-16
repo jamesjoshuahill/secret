@@ -3,7 +3,7 @@ package client_test
 import (
 	"crypto/x509"
 
-	"github.com/jamesjoshuahill/ciphers/pkg/client"
+	"github.com/jamesjoshuahill/secret/pkg/client"
 )
 
 func Example() {

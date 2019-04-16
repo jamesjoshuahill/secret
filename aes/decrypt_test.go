@@ -1,7 +1,7 @@
 package aes_test
 
 import (
-	"github.com/jamesjoshuahill/ciphers/aes"
+	"github.com/jamesjoshuahill/secret/aes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/jamesjoshuahill/ciphers/pkg/client"
+	"github.com/jamesjoshuahill/secret/pkg/client"
 	"golang.org/x/xerrors"
 
 	. "github.com/onsi/ginkgo"

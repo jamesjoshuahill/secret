@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/jamesjoshuahill/ciphers/inmemory"
+	"github.com/jamesjoshuahill/secret/inmemory"
 )
 
 const contentTypeJSON = "application/json"

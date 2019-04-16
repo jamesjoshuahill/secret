@@ -77,7 +77,7 @@ curl \
 
 The `client` package provides a `Client` to interact with the server.
 
-Please refer to the package [documentation](https://godoc.org/github.com/jamesjoshuahill/ciphers/pkg/client).
+Please refer to the package [documentation](https://godoc.org/github.com/jamesjoshuahill/secret/pkg/client).
 
 ## API
 

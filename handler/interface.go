@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/jamesjoshuahill/ciphers/aes"
-	"github.com/jamesjoshuahill/ciphers/inmemory"
+	"github.com/jamesjoshuahill/secret/aes"
+	"github.com/jamesjoshuahill/secret/inmemory"
 )
 
 type Repository interface {

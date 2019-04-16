@@ -9,7 +9,7 @@ import (
 	"os/exec"
 	"testing"
 
-	"github.com/jamesjoshuahill/ciphers/pkg/client"
+	"github.com/jamesjoshuahill/secret/pkg/client"
 
 	"github.com/onsi/gomega/gexec"
 
@@ -29,7 +29,7 @@ func TestAcceptance(t *testing.T) {
 
 	BeforeSuite(func() {
 		var err error
-		pathToServerBinary, err = gexec.Build("github.com/jamesjoshuahill/ciphers/cmd/secret-server")
+		pathToServerBinary, err = gexec.Build("github.com/jamesjoshuahill/secret/cmd/secret-server")
 		Expect(err).NotTo(HaveOccurred())
 
 		serverSession = startServer(pathToServerBinary)

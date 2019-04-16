@@ -1,7 +1,7 @@
 package fake
 
 import (
-	"github.com/jamesjoshuahill/ciphers/inmemory"
+	"github.com/jamesjoshuahill/secret/inmemory"
 )
 
 type Repo struct {

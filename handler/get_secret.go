@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/jamesjoshuahill/ciphers/aes"
+	"github.com/jamesjoshuahill/secret/aes"
 
 	"github.com/gorilla/mux"
 )

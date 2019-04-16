@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/jamesjoshuahill/ciphers/aes"
-	"github.com/jamesjoshuahill/ciphers/handler"
-	"github.com/jamesjoshuahill/ciphers/inmemory"
+	"github.com/jamesjoshuahill/secret/aes"
+	"github.com/jamesjoshuahill/secret/handler"
+	"github.com/jamesjoshuahill/secret/inmemory"
 
 	"github.com/gorilla/mux"
 	"github.com/jessevdk/go-flags"

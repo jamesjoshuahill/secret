@@ -1,4 +1,4 @@
-module github.com/jamesjoshuahill/ciphers
+module github.com/jamesjoshuahill/secret
 
 go 1.12
 

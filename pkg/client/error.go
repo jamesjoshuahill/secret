@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jamesjoshuahill/ciphers/handler"
+	"github.com/jamesjoshuahill/secret/handler"
 )
 
 var (
