@@ -1,9 +1,12 @@
 package aes_test
 
 import (
+	xaes "crypto/aes"
+
 	"github.com/jamesjoshuahill/secret/aes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"golang.org/x/xerrors"
 )
 
 var _ = Describe("Decrypt", func() {
@@ -28,5 +31,19 @@ var _ = Describe("Decrypt", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(decryptedPlainText).To(Equal(plainText))
+	})
+
+	It("fails when the key is invalid", func() {
+		_, err := aes.Decrypt(aes.Secret{Key: ""})
+		Expect(err).To(HaveOccurred())
+		Expect(xerrors.Is(err, xaes.KeySizeError(0))).To(BeTrue())
+	})
+
+	It("fails when the nonce is invalid", func() {
+		_, err := aes.Decrypt(aes.Secret{
+			Key:   "6368616e676520746869732070617373776f726420746f206120736563726574",
+			Nonce: "",
+		})
+		Expect(err).To(MatchError("incorrect nonce length"))
 	})
 })

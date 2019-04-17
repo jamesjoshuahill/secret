@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/hex"
+	"errors"
 )
 
 func Decrypt(s Secret) (string, error) {
@@ -30,6 +31,10 @@ func Decrypt(s Secret) (string, error) {
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
 		return "", err
+	}
+
+	if len(nonce) != aesgcm.NonceSize() {
+		return "", errors.New("incorrect nonce length")
 	}
 
 	plainText, err := aesgcm.Open(nil, nonce, ciphertext, nil)
