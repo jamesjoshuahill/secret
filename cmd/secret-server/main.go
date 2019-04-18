@@ -65,7 +65,8 @@ func main() {
 	for {
 		select {
 		case <-stop:
-			ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+			log.Println("start shut down")
+			ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 			if err := server.Shutdown(ctx); err != nil {
 				serverErr <- fmt.Errorf("shutdown error: %s", err)
 			} else {

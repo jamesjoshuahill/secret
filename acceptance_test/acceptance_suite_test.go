@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os/exec"
 	"testing"
+	"time"
 
 	"github.com/jamesjoshuahill/secret/pkg/client"
 
@@ -40,7 +41,7 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	AfterSuite(func() {
-		serverSession.Terminate().Wait()
+		serverSession.Terminate().Wait(time.Second * 10)
 
 		gexec.CleanupBuildArtifacts()
 	})
