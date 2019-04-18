@@ -41,7 +41,7 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	AfterSuite(func() {
-		serverSession.Terminate().Wait(time.Second * 10)
+		serverSession.Terminate().Wait(time.Second * (6 + 1))
 
 		gexec.CleanupBuildArtifacts()
 	})

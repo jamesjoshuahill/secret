@@ -50,31 +50,23 @@ func main() {
 		IdleTimeout:  time.Second * 60,
 	}
 
-	serverErr := make(chan error, 1)
 	log.Printf("starting server on port %d\n", opts.Port)
 	go func() {
 		err := server.ListenAndServeTLS(opts.Cert, opts.Key)
 		if err != nil && err != http.ErrServerClosed {
-			serverErr <- fmt.Errorf("listen and serve error: %s", err)
+			log.Fatalf("listen and serve error: %s", err)
 		}
 	}()
 
 	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 
-	for {
-		select {
-		case <-stop:
-			log.Println("start shut down")
-			ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-			if err := server.Shutdown(ctx); err != nil {
-				serverErr <- fmt.Errorf("shutdown error: %s", err)
-			} else {
-				log.Println("shut down server gracefully")
-				os.Exit(0)
-			}
-		case err := <-serverErr:
-			log.Fatalf("%s\n", err)
-		}
+	<-stop
+	log.Println("shutting down server...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 6*time.Second)
+	defer cancel()
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatalf("shutdown error: %s", err)
 	}
 }
