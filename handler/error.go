@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -16,5 +17,8 @@ func writeError(w http.ResponseWriter, code int, msg string) {
 		Message: msg,
 	}
 
-	json.NewEncoder(w).Encode(errRes)
+	err := json.NewEncoder(w).Encode(errRes)
+	if err != nil {
+		log.Printf("encoding error response: %s", err)
+	}
 }
