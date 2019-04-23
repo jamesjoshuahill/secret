@@ -51,7 +51,7 @@ var _ = Describe("Server", func() {
 	It("creates and stores secrets", func() {
 		var key string
 		By("accepting a valid create secret request", func() {
-			res, err := httpsClient.Post(serverUrl("v1/secrets"), "application/json", strings.NewReader(`{
+			res, err := httpsClient.Post(serverURL("v1/secrets"), "application/json", strings.NewReader(`{
 				"id": "client-secret-id",
 				"data": "some plain text"
 			}`))
@@ -70,7 +70,7 @@ var _ = Describe("Server", func() {
 			reqBody := fmt.Sprintf(`{
 				"key": "%s"
 			}`, key)
-			req, err := http.NewRequest("GET", serverUrl("v1/secrets/client-secret-id"), strings.NewReader(reqBody))
+			req, err := http.NewRequest("GET", serverURL("v1/secrets/client-secret-id"), strings.NewReader(reqBody))
 			Expect(err).NotTo(HaveOccurred())
 			req.Header.Set("Content-Type", "application/json")
 

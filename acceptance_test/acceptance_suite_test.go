@@ -69,7 +69,7 @@ func dialServer() error {
 	return err
 }
 
-func serverUrl(path string) string {
+func serverURL(path string) string {
 	return fmt.Sprintf("%s/%s", serverBaseURL(), path)
 }
 
