@@ -62,11 +62,9 @@ func (g *GetSecret) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Data: plainText,
 	}
 
-	resBody, err := json.Marshal(secretRes)
+	err = json.NewEncoder(w).Encode(secretRes)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "encoding response body")
 		return
 	}
-
-	w.Write(resBody)
 }
