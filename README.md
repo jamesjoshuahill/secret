@@ -1,6 +1,8 @@
 # secret
 
-[![Build Status](https://travis-ci.org/jamesjoshuahill/secret.svg?branch=master)](https://travis-ci.org/jamesjoshuahill/secret) [![Go Report Card](https://goreportcard.com/badge/github.com/jamesjoshuahill/secret)](https://goreportcard.com/report/github.com/jamesjoshuahill/secret)
+[![Build Status](https://travis-ci.org/jamesjoshuahill/secret.svg?branch=master)](https://travis-ci.org/jamesjoshuahill/secret)
+[![Go Report Card](https://goreportcard.com/badge/github.com/jamesjoshuahill/secret)](https://goreportcard.com/report/github.com/jamesjoshuahill/secret)
+[![GolangCI](https://golangci.com/badges/github.com/jamesjoshuahill/secret.svg)](https://golangci.com/r/github.com/jamesjoshuahill/secret)
 
 A microservice written in Go that stores secrets using AES encryption.
 
