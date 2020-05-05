@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/jamesjoshuahill/secret/pkg/client"
-	"golang.org/x/xerrors"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -54,7 +53,7 @@ var _ = Describe("Retrieve", func() {
 
 		Expect(err).To(HaveOccurred())
 		unerr := &client.UnexpectedError{}
-		Expect(xerrors.As(err, unerr)).To(BeTrue())
+		Expect(errors.As(err, unerr)).To(BeTrue())
 		Expect(unerr.StatusCode).To(Equal(http.StatusInternalServerError))
 		Expect(unerr.Message).To(Equal("fake error"))
 	})
@@ -69,7 +68,7 @@ var _ = Describe("Retrieve", func() {
 
 		Expect(err).To(HaveOccurred())
 		unerr := &client.UnexpectedError{}
-		Expect(xerrors.As(err, unerr)).To(BeTrue())
+		Expect(errors.As(err, unerr)).To(BeTrue())
 		Expect(unerr.StatusCode).To(Equal(http.StatusInternalServerError))
 	})
 
@@ -82,7 +81,7 @@ var _ = Describe("Retrieve", func() {
 		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
 
 		Expect(err).To(HaveOccurred())
-		Expect(xerrors.Is(err, client.ErrWrongIDOrKey)).To(BeTrue())
+		Expect(errors.Is(err, client.ErrWrongIDOrKey)).To(BeTrue())
 	})
 
 	It("fails when the response cannot be parsed", func() {

@@ -2,11 +2,11 @@ package aes_test
 
 import (
 	xaes "crypto/aes"
+	"errors"
 
 	"github.com/jamesjoshuahill/secret/aes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"golang.org/x/xerrors"
 )
 
 var _ = Describe("Decrypt", func() {
@@ -36,7 +36,7 @@ var _ = Describe("Decrypt", func() {
 	It("fails when the key is invalid", func() {
 		_, err := aes.Decrypt(aes.Secret{Key: ""})
 		Expect(err).To(HaveOccurred())
-		Expect(xerrors.Is(err, xaes.KeySizeError(0))).To(BeTrue())
+		Expect(errors.Is(err, xaes.KeySizeError(0))).To(BeTrue())
 	})
 
 	It("fails when the nonce is invalid", func() {

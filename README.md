@@ -10,19 +10,20 @@ Ciphertext is stored in memory and can be retrieved with the correct AES key.
 
 ## Get
 
-_This module requires Go 1.11 or greater._
+_This module requires Go 1.13 or greater._
 
 Download into GOPATH:
 
 ```bash
 go get github.com/jamesjoshuahill/secret
-export GO111MODULE=on
+cd "$(go env GOPATH)/src/github.com/jamesjoshuahill/secret"
 ```
 
 or elsewhere:
 
 ```bash
 git clone https://github.com/jamesjoshuahill/secret.git
+cd secret
 ```
 
 ## Test
@@ -30,7 +31,7 @@ git clone https://github.com/jamesjoshuahill/secret.git
 Run the tests using the [Ginkgo](https://onsi.github.io/ginkgo/) test runner:
 
 ```bash
-go get github.com/onsi/ginkgo/ginkgo
+go install github.com/onsi/ginkgo/ginkgo
 ginkgo -r -race
 ```
 

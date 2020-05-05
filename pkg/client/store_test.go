@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"golang.org/x/xerrors"
-
 	"github.com/jamesjoshuahill/secret/pkg/client"
 
 	. "github.com/onsi/ginkgo"
@@ -56,7 +54,7 @@ var _ = Describe("Store", func() {
 
 		Expect(err).To(HaveOccurred())
 		unerr := &client.UnexpectedError{}
-		Expect(xerrors.As(err, unerr)).To(BeTrue())
+		Expect(errors.As(err, unerr)).To(BeTrue())
 		Expect(unerr.StatusCode).To(Equal(http.StatusInternalServerError))
 		Expect(unerr.Message).To(Equal("fake error"))
 	})
@@ -71,7 +69,7 @@ var _ = Describe("Store", func() {
 
 		Expect(err).To(HaveOccurred())
 		unerr := &client.UnexpectedError{}
-		Expect(xerrors.As(err, unerr)).To(BeTrue())
+		Expect(errors.As(err, unerr)).To(BeTrue())
 		Expect(unerr.StatusCode).To(Equal(http.StatusInternalServerError))
 	})
 
@@ -84,7 +82,7 @@ var _ = Describe("Store", func() {
 		_, err := c.Store([]byte("some-id"), []byte("some-payload"))
 
 		Expect(err).To(HaveOccurred())
-		Expect(xerrors.Is(err, client.ErrAlreadyExists)).To(BeTrue())
+		Expect(errors.Is(err, client.ErrAlreadyExists)).To(BeTrue())
 	})
 
 	It("fails when the response cannot be parsed", func() {
