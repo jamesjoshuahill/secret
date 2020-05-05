@@ -4,6 +4,6 @@ go:
 - 1.13.x
 
 install:
-- go get github.com/onsi/ginkgo/ginkgo
+- go install github.com/onsi/ginkgo/ginkgo
 
 script: ginkgo -r -randomizeSuites -randomizeAllSpecs -keepGoing -race -cover -trace

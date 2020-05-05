@@ -31,7 +31,7 @@ cd secret
 Run the tests using the [Ginkgo](https://onsi.github.io/ginkgo/) test runner:
 
 ```bash
-go get github.com/onsi/ginkgo/ginkgo
+go install github.com/onsi/ginkgo/ginkgo
 ginkgo -r -race
 ```
 
