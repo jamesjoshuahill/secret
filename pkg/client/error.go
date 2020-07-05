@@ -10,10 +10,13 @@ import (
 )
 
 var (
-	ErrWrongIDOrKey  = errors.New("wrong id or key")
+	// ErrWrongIDOrKey is a sentinal error returned by Client.Retrieve().
+	ErrWrongIDOrKey = errors.New("wrong id or key")
+	// ErrAlreadyExists is a sentinal error returned by Client.Retrieve().
 	ErrAlreadyExists = errors.New("secret already exists")
 )
 
+// UnexpectedError is an unexpected response from the server.
 type UnexpectedError struct {
 	StatusCode int
 	Message    string
