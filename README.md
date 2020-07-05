@@ -32,13 +32,13 @@ Run the tests using the [Ginkgo](https://onsi.github.io/ginkgo/) test runner:
 
 ```bash
 go install github.com/onsi/ginkgo/ginkgo
-ginkgo -r -race
+ginkgo -race -cover -r
 ```
 
 or:
 
 ```bash
-go test -race ./...
+go test -race -cover ./...
 ```
 
 ## Run
