@@ -54,8 +54,8 @@ func startServer(pathToServerBinary string) *gexec.Session {
 	cmd := exec.Command(
 		pathToServerBinary,
 		fmt.Sprintf("--port=%d", serverPort),
-		fmt.Sprintf("--cert=testdata/cert.pem"),
-		fmt.Sprintf("--key=testdata/key.pem"),
+		"--cert=testdata/cert.pem",
+		"--key=testdata/key.pem",
 	)
 
 	session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
