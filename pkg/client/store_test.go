@@ -13,9 +13,10 @@ import (
 
 var _ = Describe("Store", func() {
 	It("makes valid create secret requests", func() {
+		resBody := NewReadCloserSpy(`{"key":"some-key"}`)
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusOK,
-			Body:       readCloser(`{"key":"some-key"}`),
+			Body:       resBody,
 		}
 
 		key, err := c.Store([]byte("some-id"), []byte("some-payload"))
@@ -31,6 +32,7 @@ var _ = Describe("Store", func() {
 				"data": "some-payload"
 			}`))
 		Expect(key).To(Equal([]byte("some-key")))
+		Expect(resBody.CloseCount).To(Equal(1))
 	})
 
 	It("fails when the request errors", func() {
@@ -44,10 +46,11 @@ var _ = Describe("Store", func() {
 		)))
 	})
 
-	It("fails when response is not unexpected", func() {
+	It("fails when response is unexpected", func() {
+		body := NewReadCloserSpy(`{"error":"fake error"}`)
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusInternalServerError,
-			Body:       readCloser(`{"error":"fake error"}`),
+			Body:       body,
 		}
 
 		_, err := c.Store([]byte("some-id"), []byte("some-payload"))
@@ -57,12 +60,13 @@ var _ = Describe("Store", func() {
 		Expect(errors.As(err, unerr)).To(BeTrue())
 		Expect(unerr.StatusCode).To(Equal(http.StatusInternalServerError))
 		Expect(unerr.Message).To(Equal("fake error"))
+		Expect(body.CloseCount).To(Equal(1))
 	})
 
-	It("fails when the response is not unexpected and malformed", func() {
+	It("fails when the response is unexpected and malformed", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusInternalServerError,
-			Body:       readCloser("not json"),
+			Body:       NewReadCloserSpy("not json"),
 		}
 
 		_, err := c.Store([]byte("some-id"), []byte("some-payload"))
@@ -76,7 +80,7 @@ var _ = Describe("Store", func() {
 	It("fails when the secret already exists", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusConflict,
-			Body:       readCloser(`{"error":"secret already exists"}`),
+			Body:       NewReadCloserSpy(`{"error":"secret already exists"}`),
 		}
 
 		_, err := c.Store([]byte("some-id"), []byte("some-payload"))
@@ -88,7 +92,7 @@ var _ = Describe("Store", func() {
 	It("fails when the response cannot be parsed", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusOK,
-			Body:       readCloser("not json"),
+			Body:       NewReadCloserSpy("not json"),
 		}
 
 		_, err := c.Store([]byte("some-id"), []byte("some-payload"))

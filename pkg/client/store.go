@@ -24,6 +24,7 @@ func (c *Client) Store(id, payload []byte) ([]byte, error) {
 	switch res.StatusCode {
 	case http.StatusOK:
 		var body handler.CreateSecretResponse
+		defer res.Body.Close() //nolint:errcheck
 		err = json.NewDecoder(res.Body).Decode(&body)
 		if err != nil {
 			return nil, fmt.Errorf("decoding create secret response body: %s", err)

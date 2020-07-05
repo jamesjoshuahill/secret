@@ -27,6 +27,7 @@ func newUnexpectedError(res *http.Response) UnexpectedError {
 	unerr := UnexpectedError{StatusCode: res.StatusCode}
 
 	var body handler.ErrorResponse
+	defer res.Body.Close() //nolint:errcheck
 	err := json.NewDecoder(res.Body).Decode(&body)
 	if err != nil {
 		return unerr

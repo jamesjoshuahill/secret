@@ -24,6 +24,7 @@ func (c *Client) Retrieve(id, aesKey []byte) ([]byte, error) {
 	switch res.StatusCode {
 	case http.StatusOK:
 		var body handler.GetSecretResponse
+		defer res.Body.Close() //nolint:errcheck
 		err = json.NewDecoder(res.Body).Decode(&body)
 		if err != nil {
 			return nil, fmt.Errorf("decoding get secret response body: %s", err)

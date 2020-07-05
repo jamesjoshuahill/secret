@@ -2,7 +2,6 @@ package client_test
 
 import (
 	"io"
-	"io/ioutil"
 	"strings"
 	"testing"
 
@@ -42,6 +41,16 @@ func TestClient(t *testing.T) {
 	RunSpecs(t, "Client Suite")
 }
 
-func readCloser(s string) io.ReadCloser {
-	return ioutil.NopCloser(strings.NewReader(s))
+type ReadCloserSpy struct {
+	io.Reader
+	CloseCount int
+}
+
+func (r *ReadCloserSpy) Close() error {
+	r.CloseCount++
+	return nil
+}
+
+func NewReadCloserSpy(s string) *ReadCloserSpy {
+	return &ReadCloserSpy{Reader: strings.NewReader(s)}
 }

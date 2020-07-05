@@ -13,9 +13,10 @@ import (
 
 var _ = Describe("Retrieve", func() {
 	It("makes valid get secret requests", func() {
+		resBody := NewReadCloserSpy(`{"data":"some-payload"}`)
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusOK,
-			Body:       readCloser(`{"data":"some-payload"}`),
+			Body:       resBody,
 		}
 
 		actualPayload, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
@@ -30,6 +31,7 @@ var _ = Describe("Retrieve", func() {
 			"key": "some-key"
 		}`))
 		Expect(actualPayload).To(Equal([]byte("some-payload")))
+		Expect(resBody.CloseCount).To(Equal(1))
 	})
 
 	It("fails when the request errors", func() {
@@ -43,10 +45,11 @@ var _ = Describe("Retrieve", func() {
 		)))
 	})
 
-	It("fails when response is not unexpected", func() {
+	It("fails when response is unexpected", func() {
+		body := NewReadCloserSpy(`{"error":"fake error"}`)
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusInternalServerError,
-			Body:       readCloser(`{"error":"fake error"}`),
+			Body:       body,
 		}
 
 		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
@@ -56,12 +59,13 @@ var _ = Describe("Retrieve", func() {
 		Expect(errors.As(err, unerr)).To(BeTrue())
 		Expect(unerr.StatusCode).To(Equal(http.StatusInternalServerError))
 		Expect(unerr.Message).To(Equal("fake error"))
+		Expect(body.CloseCount).To(Equal(1))
 	})
 
-	It("fails when the response is not unexpected and malformed", func() {
+	It("fails when the response is unexpected and malformed", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusInternalServerError,
-			Body:       readCloser("not json"),
+			Body:       NewReadCloserSpy("not json"),
 		}
 
 		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
@@ -75,7 +79,7 @@ var _ = Describe("Retrieve", func() {
 	It("fails with the wrong secret id or key", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusUnprocessableEntity,
-			Body:       readCloser(`{"error":"wrong id or key"}`),
+			Body:       NewReadCloserSpy(`{"error":"wrong id or key"}`),
 		}
 
 		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
@@ -87,7 +91,7 @@ var _ = Describe("Retrieve", func() {
 	It("fails when the response cannot be parsed", func() {
 		httpsClient.DoCall.Returns.Response = &http.Response{
 			StatusCode: http.StatusOK,
-			Body:       readCloser("not json"),
+			Body:       NewReadCloserSpy("not json"),
 		}
 
 		_, err := c.Retrieve([]byte("some-id"), []byte("some-key"))
