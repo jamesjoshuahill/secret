@@ -5,5 +5,8 @@ go:
 
 install:
 - go install github.com/onsi/ginkgo/ginkgo
+- curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.36.0
 
-script: ginkgo -r -randomizeSuites -randomizeAllSpecs -keepGoing -race -cover -trace
+script:
+- golangci-lint run
+- ginkgo -r -randomizeSuites -randomizeAllSpecs -keepGoing -race -cover -trace

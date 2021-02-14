@@ -25,6 +25,16 @@ git clone https://github.com/jamesjoshuahill/secret.git
 cd secret
 ```
 
+## Lint
+
+Install [golangci-lint](https://golangci-lint.run/usage/install/#local-installation).
+
+Run linters:
+
+```bash
+golangci-lint run
+```
+
 ## Test
 
 Run the tests using the [Ginkgo](https://onsi.github.io/ginkgo/) test runner:
