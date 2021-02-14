@@ -13,7 +13,8 @@ import (
 func DefaultHTTPSClient(certPool *x509.CertPool) *http.Client {
 	transport := http.DefaultTransport.(*http.Transport)
 	transport.TLSClientConfig = &tls.Config{
-		RootCAs: certPool,
+		RootCAs:    certPool,
+		MinVersion: tls.VersionTLS13,
 	}
 
 	return &http.Client{Transport: transport}

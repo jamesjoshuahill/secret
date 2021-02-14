@@ -5,19 +5,19 @@ import (
 	"sync"
 )
 
-type repo struct {
+type Repo struct {
 	mutex   *sync.RWMutex
 	secrets map[string]Secret
 }
 
-func NewRepo() *repo {
-	return &repo{
+func NewRepo() *Repo {
+	return &Repo{
 		mutex:   &sync.RWMutex{},
 		secrets: make(map[string]Secret),
 	}
 }
 
-func (r *repo) Store(secret Secret) error {
+func (r *Repo) Store(secret Secret) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
@@ -30,7 +30,7 @@ func (r *repo) Store(secret Secret) error {
 	return nil
 }
 
-func (r *repo) FindByID(id string) (Secret, error) {
+func (r *Repo) FindByID(id string) (Secret, error) {
 	r.mutex.RLock()
 	defer r.mutex.RUnlock()
 
