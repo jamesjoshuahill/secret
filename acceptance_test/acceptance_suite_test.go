@@ -35,7 +35,7 @@ func TestAcceptance(t *testing.T) {
 
 		serverSession = startServer(pathToServerBinary)
 
-		Eventually(dialServer).Should(Succeed())
+		Eventually(dialServer, 5*time.Second).Should(Succeed())
 
 		httpsClient = newClient()
 	})
