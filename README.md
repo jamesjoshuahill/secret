@@ -9,16 +9,7 @@ Ciphertext is stored in memory and can be retrieved with the correct AES key.
 
 ## Get
 
-_This module requires Go 1.13 or greater._
-
-Download into GOPATH:
-
-```bash
-go get github.com/jamesjoshuahill/secret
-cd "$(go env GOPATH)/src/github.com/jamesjoshuahill/secret"
-```
-
-or elsewhere:
+_This module requires Go 1.15 or greater._
 
 ```bash
 git clone https://github.com/jamesjoshuahill/secret.git
