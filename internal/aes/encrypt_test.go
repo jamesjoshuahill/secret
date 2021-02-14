@@ -6,7 +6,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/jamesjoshuahill/secret/aes"
+	"github.com/jamesjoshuahill/secret/internal/aes"
 )
 
 var _ = Describe("Encrypt", func() {

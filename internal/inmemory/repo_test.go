@@ -3,7 +3,7 @@ package inmemory_test
 import (
 	"sync"
 
-	"github.com/jamesjoshuahill/secret/inmemory"
+	"github.com/jamesjoshuahill/secret/internal/inmemory"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

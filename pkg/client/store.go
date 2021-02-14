@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jamesjoshuahill/secret/handler"
+	"github.com/jamesjoshuahill/secret/internal/handler"
 )
 
 // Store sends an HTTP request to create a secret of the payload with an id,

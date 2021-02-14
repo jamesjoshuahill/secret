@@ -4,7 +4,7 @@ import (
 	xaes "crypto/aes"
 	"errors"
 
-	"github.com/jamesjoshuahill/secret/aes"
+	"github.com/jamesjoshuahill/secret/internal/aes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

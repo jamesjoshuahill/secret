@@ -10,9 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/jamesjoshuahill/secret/aes"
-	"github.com/jamesjoshuahill/secret/handler"
-	"github.com/jamesjoshuahill/secret/inmemory"
+	"github.com/jamesjoshuahill/secret/internal/aes"
+	"github.com/jamesjoshuahill/secret/internal/handler"
+	"github.com/jamesjoshuahill/secret/internal/inmemory"
 
 	"github.com/gorilla/mux"
 	"github.com/jessevdk/go-flags"

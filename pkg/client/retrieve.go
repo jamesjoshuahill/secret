@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jamesjoshuahill/secret/handler"
+	"github.com/jamesjoshuahill/secret/internal/handler"
 )
 
 // Retrieve sends an HTTP request to get the secret using and id and aesKey,
