@@ -80,7 +80,7 @@ curl \
 
 The `client` package provides a `Client` to interact with the server.
 
-Please refer to the package [documentation](https://godoc.org/github.com/jamesjoshuahill/secret/pkg/client).
+Please refer to the [package documentation](https://pkg.go.dev/github.com/jamesjoshuahill/secret/pkg/client).
 
 ## API
 
