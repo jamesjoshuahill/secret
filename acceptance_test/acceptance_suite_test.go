@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"os/exec"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -30,7 +31,7 @@ func TestAcceptance(t *testing.T) {
 
 	BeforeSuite(func() {
 		var err error
-		pathToServerBinary, err = gexec.Build("github.com/jamesjoshuahill/secret/cmd/secret-server")
+		pathToServerBinary, err = filepath.Abs("../bin/secret-server")
 		Expect(err).NotTo(HaveOccurred())
 
 		serverSession = startServer(pathToServerBinary)
@@ -42,8 +43,6 @@ func TestAcceptance(t *testing.T) {
 
 	AfterSuite(func() {
 		serverSession.Terminate().Wait(time.Second * (6 + 1))
-
-		gexec.CleanupBuildArtifacts()
 	})
 
 	RegisterFailHandler(Fail)

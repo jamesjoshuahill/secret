@@ -18,33 +18,51 @@ import (
 // If not set, running mage will list available targets
 var Default = All
 
-// Run: lint test
+// Run the default targets
 func All() {
 	mg.SerialDeps(Lint, Test)
 }
 
-// Run linters using golangci-lint
+// Build Build the server binary
+func Build() error {
+	logStep("Build")
+	return sh.Run("go", "build", "-o", "./bin/secret-server", "./cmd/secret-server")
+}
+
+// Run the linters
 func Lint() error {
 	mg.Deps(InstallGolangCILint)
-	fmt.Println("=> Lint")
-	return sh.Run("./tools/golangci-lint", "run")
+	logStep("Lint")
+	return sh.RunV("./tools/golangci-lint", "run")
 }
 
-// Run tests using ginkgo test runner
-func Test() error {
+// Run all tests
+func Test() {
+	mg.SerialDeps(TestUnit, TestAcceptance)
+}
+
+// Run unit tests
+func TestUnit() error {
 	mg.Deps(InstallGinkgo)
-	fmt.Println("=> Test")
-	return sh.Run("./tools/ginkgo", "-race", "-cover", "-r")
+	logStep("Test Unit")
+	return sh.RunV("./tools/ginkgo", "-race", "-cover", "-r", "-skipPackage", "acceptance_test")
 }
 
-// Install golangci-lint in tools directory
+// Run acceptance tests
+func TestAcceptance() error {
+	mg.Deps(Build, InstallGinkgo)
+	logStep("Test Acceptance")
+	return sh.RunV("./tools/ginkgo", "acceptance_test")
+}
+
+// Install golangci-lint
 func InstallGolangCILint() error {
 	needUpdate, err := target.Path("./tools/golangci-lint")
 	if err != nil || !needUpdate {
 		return err
 	}
 
-	fmt.Println("=> Install golangci-lint")
+	logStep("Install golangci-lint")
 
 	version := "1.38.0"
 
@@ -60,20 +78,24 @@ func InstallGolangCILint() error {
 	defer sh.Rm(tarball.Name())
 
 	asset := fmt.Sprintf("golangci-lint-%s-%s-amd64", version, runtime.GOOS)
-	u := fmt.Sprintf("https://github.com/golangci/golangci-lint/releases/download/v%s/%s.tar.gz", version, asset)
+	u := fmt.Sprintf("https://github.com/golangci/golangci-lint/releases/download/v%s/%s.tar.gz",
+		version, asset)
 
 	err = sh.Run("curl", "-sSfL", u, "-o", tarball.Name())
-	return sh.Run("tar", "xf", tarball.Name(), "-C", "tools", "--strip-components", "1", fmt.Sprintf("%s/golangci-lint", asset))
+	return sh.Run("tar", "xf", tarball.Name(),
+		"-C", "tools",
+		"--strip-components", "1",
+		fmt.Sprintf("%s/golangci-lint", asset))
 }
 
-// Install ginkgo in tools directory
+// Install ginkgo
 func InstallGinkgo() error {
 	needUpdate, err := target.Path("./tools/ginkgo", "./go.mod")
 	if err != nil || !needUpdate {
 		return err
 	}
 
-	fmt.Println("=> Install ginkgo")
+	logStep("Install ginkgo")
 	d, err := filepath.Abs("./tools")
 	if err != nil {
 		return err
@@ -82,8 +104,26 @@ func InstallGinkgo() error {
 	return sh.RunWith(env, "go", "install", "github.com/onsi/ginkgo/ginkgo")
 }
 
-// Remove tools directory
+// Start Start the server
+func Start() error {
+	mg.Deps(Build)
+	logStep("Start server")
+	return sh.RunV("./bin/secret-server",
+		"--port", "8080",
+		"--cert", "acceptance_test/testdata/cert.pem",
+		"--key", "acceptance_test/testdata/key.pem")
+}
+
+// Remove binaries and tools
 func Clean() error {
-	fmt.Println("=> Clean")
+	logStep("Clean")
+	err := sh.Rm("./bin")
+	if err != nil {
+		return err
+	}
 	return sh.Rm("./tools")
+}
+
+func logStep(step string) {
+	fmt.Printf("==> %s\n", step)
 }

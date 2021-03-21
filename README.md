@@ -37,7 +37,7 @@ mage lint
 Run the tests using the [Ginkgo](https://onsi.github.io/ginkgo/) test runner:
 
 ```bash
-mage -v test
+mage test
 ```
 
 ## Run
@@ -47,10 +47,7 @@ _The server requires TLS configuration._
 For example, use the self-signed certificate and private key used by the test suite:
 
 ```bash
-go run cmd/secret-server/main.go \
-  --port 8080 \
-  --cert acceptance_test/testdata/cert.pem \
-  --key acceptance_test/testdata/key.pem
+mage start
 ```
 
 Then, create a secret:
