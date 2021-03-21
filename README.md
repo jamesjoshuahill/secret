@@ -16,14 +16,20 @@ git clone https://github.com/jamesjoshuahill/secret.git
 cd secret
 ```
 
-## Lint
+## Install Mage
 
-Install [golangci-lint](https://golangci-lint.run/usage/install/#local-installation).
-
-Run linters:
+Install [mage](https://magefile.org)
 
 ```bash
-golangci-lint run
+brew install mage
+```
+
+## Lint
+
+Run [golangci-lint](https://golangci-lint.run):
+
+```bash
+mage lint
 ```
 
 ## Test
@@ -31,14 +37,7 @@ golangci-lint run
 Run the tests using the [Ginkgo](https://onsi.github.io/ginkgo/) test runner:
 
 ```bash
-go install github.com/onsi/ginkgo/ginkgo
-ginkgo -race -cover -r
-```
-
-or:
-
-```bash
-go test -race -cover ./...
+mage -v test
 ```
 
 ## Run
