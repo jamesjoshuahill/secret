@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly mage_version="1.11.0"
+
+readonly dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+readonly tools_dir="$dir/tools"
+
+if ! command -v "$tools_dir/mage" > /dev/null
+then
+  echo "==> Install mage"
+
+  readonly temp_dir="$(mktemp -d)"
+  git clone https://github.com/magefile/mage "$temp_dir"
+  (
+    cd "$temp_dir"
+    GOBIN="$tools_dir" go run bootstrap.go
+  )
+
+  "$tools_dir/mage" -version
+fi
+
+"$tools_dir/mage" -d "$dir/internal/" -w "$dir" "$@"
