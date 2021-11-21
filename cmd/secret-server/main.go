@@ -23,14 +23,7 @@ type options struct {
 }
 
 func main() {
-	opts := &options{}
-	_, err := flags.Parse(opts)
-	if err != nil {
-		if outErr, ok := err.(*flags.Error); ok && outErr.Type == flags.ErrHelp {
-			os.Exit(0)
-		}
-		os.Exit(1)
-	}
+	opts := parseOptions()
 
 	repo := inmemory.NewRepo()
 	createSecretHandler := &handler.CreateSecret{Repository: repo, Encrypt: aes.Encrypt}
@@ -51,4 +44,17 @@ func main() {
 	if err := server.Shutdown(6 * time.Second); err != nil {
 		log.Fatalf("error shutting down server: %s", err)
 	}
+}
+
+func parseOptions() *options {
+	opts := options{}
+	_, err := flags.Parse(&opts)
+	if err != nil {
+		if outErr, ok := err.(*flags.Error); ok && outErr.Type == flags.ErrHelp {
+			os.Exit(0)
+		}
+		os.Exit(1)
+	}
+
+	return &opts
 }
