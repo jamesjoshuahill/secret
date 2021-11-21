@@ -1,16 +1,14 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"syscall"
 	"time"
 
 	"github.com/jamesjoshuahill/secret/internal/aes"
 	"github.com/jamesjoshuahill/secret/internal/handler"
+	"github.com/jamesjoshuahill/secret/internal/http"
 	"github.com/jamesjoshuahill/secret/internal/inmemory"
 	"github.com/jamesjoshuahill/secret/internal/signal"
 
@@ -39,31 +37,18 @@ func main() {
 	getSecretHandler := &handler.GetSecret{Repository: repo, Decrypt: aes.Decrypt}
 
 	r := mux.NewRouter()
-	r.Methods(http.MethodPost).Path("/v1/secrets").Handler(createSecretHandler)
-	r.Methods(http.MethodGet).Path("/v1/secrets/{id}").Handler(getSecretHandler)
+	r.Methods("POST").Path("/v1/secrets").Handler(createSecretHandler)
+	r.Methods("GET").Path("/v1/secrets/{id}").Handler(getSecretHandler)
 
-	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", opts.Port),
-		Handler:      r,
-		WriteTimeout: time.Second * 15,
-		ReadTimeout:  time.Second * 15,
-		IdleTimeout:  time.Second * 60,
-	}
+	server := http.NewServer(opts.Port, r)
 
 	log.Printf("starting server on port %d\n", opts.Port)
-	go func() {
-		err := server.ListenAndServeTLS(opts.Cert, opts.Key)
-		if err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen and serve error: %s", err)
-		}
-	}()
+	server.StartTLS(opts.Cert, opts.Key)
 
 	signal.Wait(os.Interrupt, syscall.SIGTERM)
 	log.Println("shutting down server...")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 6*time.Second)
-	defer cancel()
-	if err := server.Shutdown(ctx); err != nil {
-		log.Fatalf("shutdown error: %s", err)
+	if err := server.Shutdown(6 * time.Second); err != nil {
+		log.Fatalf("error shutting down server: %s", err)
 	}
 }
