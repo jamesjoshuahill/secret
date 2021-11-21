@@ -6,13 +6,13 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/jamesjoshuahill/secret/internal/aes"
 	"github.com/jamesjoshuahill/secret/internal/handler"
 	"github.com/jamesjoshuahill/secret/internal/inmemory"
+	"github.com/jamesjoshuahill/secret/internal/signal"
 
 	"github.com/gorilla/mux"
 	"github.com/jessevdk/go-flags"
@@ -58,10 +58,7 @@ func main() {
 		}
 	}()
 
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
-
-	<-stop
+	signal.Wait(os.Interrupt, syscall.SIGTERM)
 	log.Println("shutting down server...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 6*time.Second)
