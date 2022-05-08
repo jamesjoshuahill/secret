@@ -11,14 +11,15 @@ import (
 	"time"
 
 	"github.com/jamesjoshuahill/secret/pkg/client"
-
-	"github.com/onsi/gomega/gexec"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gexec"
 )
 
-const serverPort = 8080
+const (
+	serverHost = "localhost"
+	serverPort = 8080
+)
 
 var (
 	pathToServerBinary string
@@ -53,9 +54,10 @@ func TestAcceptance(t *testing.T) {
 func startServer(pathToServerBinary string) *gexec.Session {
 	cmd := exec.Command(
 		pathToServerBinary,
-		fmt.Sprintf("--port=%d", serverPort),
-		"--cert=testdata/cert.pem",
-		"--key=testdata/key.pem",
+		"--host", "localhost",
+		"--port", fmt.Sprintf("%d", serverPort),
+		"--cert", "testdata/cert.pem",
+		"--key", "testdata/key.pem",
 	)
 
 	session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
@@ -65,7 +67,7 @@ func startServer(pathToServerBinary string) *gexec.Session {
 }
 
 func dialServer() error {
-	_, err := net.Dial("tcp", fmt.Sprintf(":%d", serverPort))
+	_, err := net.Dial("tcp", fmt.Sprintf("%s:%d", serverHost, serverPort))
 	return err
 }
 
@@ -74,7 +76,7 @@ func serverURL(path string) string {
 }
 
 func serverBaseURL() string {
-	return fmt.Sprintf("https://127.0.0.1:%d", serverPort)
+	return fmt.Sprintf("https://%s:%d", serverHost, serverPort)
 }
 
 func newClient() *http.Client {

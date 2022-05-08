@@ -6,17 +6,17 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/jamesjoshuahill/secret/internal/aes"
 	"github.com/jamesjoshuahill/secret/internal/handler"
 	"github.com/jamesjoshuahill/secret/internal/http"
 	"github.com/jamesjoshuahill/secret/internal/inmemory"
 	"github.com/jamesjoshuahill/secret/internal/signal"
-
-	"github.com/gorilla/mux"
 	"github.com/jessevdk/go-flags"
 )
 
 type options struct {
+	Host string `long:"host" description:"Host to serve HTTPS" default:""`
 	Port int    `long:"port" description:"Port to serve HTTPS" required:"true"`
 	Cert string `long:"cert" description:"Path to TLS certificate file" required:"true"`
 	Key  string `long:"key" description:"Path to TLS private key file" required:"true"`
@@ -33,16 +33,16 @@ func main() {
 	r.Methods("POST").Path("/v1/secrets").Handler(createSecretHandler)
 	r.Methods("GET").Path("/v1/secrets/{id}").Handler(getSecretHandler)
 
-	server := http.NewServer(opts.Port, r)
+	server := http.NewServer(opts.Host, opts.Port, r)
 
-	log.Printf("starting server on port %d\n", opts.Port)
+	log.Printf("starting server on %s:%d\n", opts.Host, opts.Port)
 	server.StartTLS(opts.Cert, opts.Key)
 
 	signal.Wait(os.Interrupt, syscall.SIGTERM)
-	log.Println("shutting down server...")
 
+	log.Println("shutting down...")
 	if err := server.Shutdown(6 * time.Second); err != nil {
-		log.Fatalf("error shutting down server: %s", err)
+		log.Fatalln(err)
 	}
 }
 

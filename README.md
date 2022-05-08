@@ -49,6 +49,7 @@ For example, use the self-signed certificate and private key used by the test su
 
 ```bash
 go run cmd/secret-server/main.go \
+  --host localhost \
   --port 8080 \
   --cert acceptance_test/testdata/cert.pem \
   --key acceptance_test/testdata/key.pem
@@ -59,7 +60,7 @@ Then, create a secret:
 ```bash
 curl \
   --cacert acceptance_test/testdata/cert.pem \
-  https://127.0.0.1:8080/v1/secrets \
+  https://localhost:8080/v1/secrets \
   -X POST \
   -H 'Content-Type: application/json' \
   -d '{"id":"some-id","data":"some plain text"}'
@@ -70,7 +71,7 @@ and retrieve it using the AES key:
 ```bash
 curl \
   --cacert acceptance_test/testdata/cert.pem \
-  https://127.0.0.1:8080/v1/secrets/some-id \
+  https://localhost:8080/v1/secrets/some-id \
   -X GET \
   -H 'Content-Type: application/json' \
   -d '{"key":"AES KEY for secret"}'
